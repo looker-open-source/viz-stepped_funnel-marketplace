@@ -25,10 +25,12 @@ export interface Looker {
     addError?: (error: VisualizationError) => void
     clearErrors?: (errorName?: string) => void
     create: (element: HTMLElement, settings: VisConfig) => void
-    trigger?: (event: string, config: object[]) => void
+    trigger?: (event: string, config: object[] | VisOptions) => void
     update?: (data: VisData, element: HTMLElement, config: VisConfig, queryResponse: VisQueryResponse, details?: VisUpdateDetails) => void
     updateAsync?: (data: VisData, element: HTMLElement, config: VisConfig, queryResponse: VisQueryResponse, details: VisUpdateDetails | undefined, updateComplete: () => void) => void
-    destroy?: () => void
+    destroy?: () => void,
+    toggleOption?: (section: string, label: string, init: boolean, parent?: string) => VisOption,
+    stringOption?: (section: string, label: string, init: string, parent?: string) => VisOption,
   }
   
   export interface VisOptions { [optionName: string]: VisOption }
