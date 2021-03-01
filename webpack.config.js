@@ -5,10 +5,10 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var webpackConfig = {
     mode: 'production',
     entry: {
-        hello_world: './src/hello_world_container.tsx',
+        hello_world: './src/SteppedFunnelContainer.tsx',
     },
     output: {
-        filename: '[name].js',
+        filename: 'bundle.js',
         path: path.join(__dirname, 'dist'),
         library: '[name]',
         libraryTarget: 'umd',
