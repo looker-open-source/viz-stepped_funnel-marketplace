@@ -30,7 +30,9 @@ export const FunnelStep = styled.div`
 export const FunnelStepContents = styled.span`
   display: table-cell; 
   vertical-align: middle;
-  // TODO: Label Scale option
+  // TODOing: Label Scale option, labels not implemented, need to test
+  // font-size: ${(props: FunnelStepContentsProps) => props.font_size}em;
+
   font-size: 2em;
   // TODO: Labels > Color Label Toggle > Color Label
   color: ${(props: FunnelStepContentsProps) => props.color};
@@ -69,9 +71,9 @@ export const AxisLabel = styled.span`
 export const FunnelStepOuterContents = styled.span`
   overflow: hidden;
   // TODO: Label Scale option
-  font-size: 2em;
+  font-size: 3em;
   // TODO: Labels > Color Label Toggle > Color Label
-  color: ${(props: FunnelStepOuterContentsProps) => props.color};
+  color: ${(props: FunnelStepOuterContentsProps) => props.color} em;
   position: absolute;
   left: 50%;
   z-index: -1;
@@ -102,6 +104,7 @@ export interface AxisContainerProps {
 
 export interface FunnelStepContentsProps {
   color: string
+  font_size: number
 }
 
 export interface FunnelStepOuterContentsProps extends FunnelStepContentsProps {

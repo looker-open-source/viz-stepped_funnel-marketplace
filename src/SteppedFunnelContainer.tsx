@@ -26,6 +26,7 @@ const vis: SteppedFunnelChart = {
     label_left_axis: Vizzy.makeToggle("Axes", "Label Left Axis", false, 1),
     label_right_axis: Vizzy.makeToggle("Axes", "Label Right Axis", false, 2),
     bar_colors: Vizzy.makeColor("Bars", "Palette", 1),
+    bar_scale: Vizzy.makeNumber("Bars", "Label Scale", 2),
     autosort: Vizzy.makeToggle("Bars", "Autosort", false, 2),
   },
   // this happens exactly once
