@@ -31,9 +31,9 @@ export const FunnelStepContents = styled.span`
   display: table-cell; 
   vertical-align: middle;
   // TODOing: Label Scale option, labels not implemented, need to test
-  // font-size: ${(props: FunnelStepContentsProps) => props.font_size}em;
+  font-size: ${(props: FunnelStepContentsProps) => props.font_size}em;
 
-  font-size: 2em;
+  // font-size: 2em;
   // TODO: Labels > Color Label Toggle > Color Label
   color: ${(props: FunnelStepContentsProps) => props.color};
 `
