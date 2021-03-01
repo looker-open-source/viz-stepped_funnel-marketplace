@@ -139,13 +139,15 @@ export interface SteppedFunnelChart extends VisualizationDefinition {
 }
 
 export interface MarketplaceVizHelpers {
-  toggleOption: (section: string, label: string, init: boolean, order?: number, parent?: string, parentObj?: any) => VisOption,
-  stringOption: (section: string, label: string, init: string, order?: number, parent?: string, parentObj?: any) => VisOption,
-  colorOption(section: string, label: string, order?: number, parentKey?: string, parentObj?: any): VisOption
+  makeToggle: (section: string, label: string, init: boolean, order?: number, parent?: string, parentObj?: any) => VisOption,
+  makeString: (section: string, label: string, init: string, order?: number, parent?: string, parentObj?: any) => VisOption,
+  makeColor: (section: string, label: string, order?: number, parentKey?: string, parentObj?: any) => VisOption,
+  dependToggle: (section: string, label: string, init: boolean, parentKey?: string, parentObj?: any) => VisOption,
+  dependString: (section: string, label: string, init: string, parentKey?: string, parentObj?: any) => VisOption
 }
 
 export const Vizzy: MarketplaceVizHelpers = {
-  toggleOption(section: string, label: string, init: boolean, order?: number, parentKey?: string, parentObj?: any): VisOption {
+  makeToggle(section: string, label: string, init: boolean, order?: number, parentKey?: string, parentObj?: any): VisOption {
     return {
       type: "boolean",
       label: label,
@@ -154,7 +156,16 @@ export const Vizzy: MarketplaceVizHelpers = {
       order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
     }
   },
-  stringOption(section: string, label: string, init: string, order?: number, parentKey?: string, parentObj?: any): VisOption {
+  dependToggle(section: string, label: string, init: boolean, parentKey?: string, parentObj?: any): VisOption {
+    return {
+      type: "boolean",
+      label: label,
+      default: init,
+      section: section,
+      order: parentKey && parentObj.options[parentKey].order + 1
+    }
+  },
+  makeString(section: string, label: string, init: string, order?: number, parentKey?: string, parentObj?: any): VisOption {
     return {
       type: "string",
       label: label,
@@ -163,7 +174,16 @@ export const Vizzy: MarketplaceVizHelpers = {
       order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
     }
   },
-  colorOption(section: string, label: string, order?: number, parentKey?: string, parentObj?: any): VisOption {
+  dependString(section: string, label: string, init: string, parentKey?: string, parentObj?: any): VisOption {
+    return {
+      type: "string",
+      label: label,
+      default: init,
+      section: section,
+      order: parentKey && parentObj.options[parentKey].order + 1
+    }
+  },
+  makeColor(section: string, label: string, order?: number, parentKey?: string, parentObj?: any): VisOption {
     return {
       type: "array",
       label: label,

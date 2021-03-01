@@ -23,10 +23,10 @@ declare var LookerCharts: LookerChartUtils
 const vis: SteppedFunnelChart = {
   // initial options applied to viz
   options: {
-    label_left_axis: Vizzy.toggleOption("Axes", "Label Left Axis", false, 1),
-    label_right_axis: Vizzy.toggleOption("Axes", "Label Right Axis", false, 2),
-    bar_colors: Vizzy.colorOption("Bars", "Palette", 1),
-    autosort: Vizzy.toggleOption("Bars", "Autosort", false, 2),
+    label_left_axis: Vizzy.makeToggle("Axes", "Label Left Axis", false, 1),
+    label_right_axis: Vizzy.makeToggle("Axes", "Label Right Axis", false, 2),
+    bar_colors: Vizzy.makeColor("Bars", "Palette", 1),
+    autosort: Vizzy.makeToggle("Bars", "Autosort", false, 2),
   },
   // this happens exactly once
   create(element, config) {
@@ -39,8 +39,8 @@ const vis: SteppedFunnelChart = {
     Object.assign(previousOptions, this.options)
 
     // add any dynamic options
-    this.options.left_axis_label = config.label_left_axis && Vizzy.stringOption("Axes", "Left Axis Label", "", 0, "label_left_axis", vis)
-    this.options.right_axis_label = config.label_right_axis && Vizzy.stringOption("Axes", "Right Axis Label", "", 0, "label_right_axis", vis)
+    this.options.left_axis_label = config.label_left_axis && Vizzy.dependString("Axes", "Left Axis Label", "", "label_left_axis", vis)
+    this.options.right_axis_label = config.label_right_axis && Vizzy.dependString("Axes", "Right Axis Label", "", "label_right_axis", vis)
 
     // register new options if options has changed since last render
     if (JSON.stringify(previousOptions) !== JSON.stringify(this.options)) {
