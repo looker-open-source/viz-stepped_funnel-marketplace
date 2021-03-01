@@ -53,8 +53,10 @@ const vis: SteppedFunnelChart = {
     inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
     let chunkedData: Chunk[] = inputFields.map((fieldName: string) => {
       let datum = inputRow[fieldName]
+      let fieldQr = queryResponse.fields.measure_like.filter((f: any) => f.name === fieldName)[0]
       return {
-        label: fieldName,
+        label: fieldQr.label_short,
+        name: fieldName,
         value: datum.value,
         rendered: datum.rendered,
         links: datum.links as Link[]

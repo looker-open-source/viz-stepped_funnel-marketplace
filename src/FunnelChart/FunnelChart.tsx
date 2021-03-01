@@ -25,7 +25,7 @@
  */
 
 import React, { useRef, useLayoutEffect, useState } from "react"
-import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterContents, FunnelStepWrapper, ChartWrapper } from "./types"
+import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterContents, FunnelStepWrapper, ChartWrapper, AxisContainer, AxisLabel, LeftAxis, Chart, RightAxis } from "./types"
 import { Chunk } from "../types"
 import { getChartText } from "./utils"
 import styled from "styled-components"
@@ -38,19 +38,32 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
  }) => {
   return (
     <ChartWrapper>
-      {data.map((d: Chunk, i: number) => {
+      <LeftAxis>{data.map((d: Chunk, i: number) => {
         let stepWidthPct = d.percent_number || 0
         let stepText = getChartText(d.percent)
         let textWidth = stepText.width
         let stepWidth = element.getBoundingClientRect().width * stepWidthPct
-        let outerStepTextY = ((i / data.length) * element.getBoundingClientRect().height) + ((1 / data.length / 2) * element.getBoundingClientRect().height) - (stepText.height / 4)
+        let stepHeight = 1 / data.length * element.getBoundingClientRect().height
+        let outerStepTextY = (stepHeight + ((1 / data.length / 2) * element.getBoundingClientRect().height) - (stepText.height / 4))
         let textWithin = textWidth < stepWidth ? true : false
         return (
-        <FunnelStepWrapper>
+          <AxisContainer height={stepHeight}><AxisLabel>{d.label}</AxisLabel></AxisContainer>
+        )
+      })}</LeftAxis>
+      <Chart>{data.map((d: Chunk, i: number) => {
+        let stepWidthPct = d.percent_number || 0
+        let stepText = getChartText(d.percent)
+        let textWidth = stepText.width
+        let stepWidth = element.getBoundingClientRect().width * stepWidthPct
+        let stepHeight = 1 / data.length * element.getBoundingClientRect().height
+        let outerStepTextY = (stepHeight * i + ((1 / data.length / 2) * element.getBoundingClientRect().height)) + (stepText.height / 4)
+        let textWithin = textWidth < stepWidth ? true : false
+        return (
+        <FunnelStepWrapper height={stepHeight}>
           <FunnelStep 
             color={config.bar_colors[i]}
-            width={stepWidthPct}
-            heightShare={1 / data.length}
+            width={stepWidthPct - 0.02}
+            height={stepHeight}
             onClick={(e: any)=>{
               // @ts-ignore
               openDrillMenu({
@@ -61,10 +74,22 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
           >
             {textWithin && <FunnelStepContents font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
           </FunnelStep>
-          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors[i]} padding={stepWidthPct} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
+          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors[i]} padding={stepWidthPct/2} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
         </FunnelStepWrapper>
         )
-      })}
+      })}</Chart>
+      <RightAxis>{data.map((d: Chunk, i: number) => {
+        let stepWidthPct = d.percent_number || 0
+        let stepText = getChartText(d.percent)
+        let textWidth = stepText.width
+        let stepWidth = element.getBoundingClientRect().width * stepWidthPct
+        let stepHeight = 1 / data.length * element.getBoundingClientRect().height
+        let outerStepTextY = (stepHeight + ((1 / data.length / 2) * element.getBoundingClientRect().height) - (stepText.height / 4))
+        let textWithin = textWidth < stepWidth ? true : false
+        return (
+          <AxisContainer height={stepHeight}><AxisLabel>{d.rendered}</AxisLabel></AxisContainer>
+        )
+      })}</RightAxis>
     </ChartWrapper>
   )
 }

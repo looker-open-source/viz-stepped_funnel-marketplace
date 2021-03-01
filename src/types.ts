@@ -9,6 +9,7 @@ export interface Looker {
 
 export interface Chunk {
   label: string
+  name?: string
   percent?: string
   value: number
   rendered: string | Cell | undefined
