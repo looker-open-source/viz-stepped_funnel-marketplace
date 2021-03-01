@@ -59,9 +59,9 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
               });
             }}
           >
-            {textWithin && <FunnelStepContents color={"#FFF"}>{stepText.element}</FunnelStepContents>}
+            {textWithin && <FunnelStepContents font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
           </FunnelStep>
-          {!textWithin && <FunnelStepOuterContents color={config.bar_colors[i]} padding={stepWidthPct} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
+          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors[i]} padding={stepWidthPct} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
         </FunnelStepWrapper>
         )
       })}
