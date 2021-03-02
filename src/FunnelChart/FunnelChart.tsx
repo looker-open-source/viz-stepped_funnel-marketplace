@@ -30,33 +30,34 @@ import { Chunk } from "../types"
 import { getChartText } from "./utils"
 import styled from "styled-components"
 
+export interface TooltipProps {
+  x: number
+  y: number
+  content: string
+}
+
 export const FunnelChart: React.FC<FunnelChartProps> = ({ 
   data,
   config,
   element,
   openDrillMenu,
  }) => {
+  const [ tooltip, setTooltip ] = useState<TooltipProps | undefined>(undefined)
+  let stepHeight = 1 / data.length * element.getBoundingClientRect().height
   return (
     <ChartWrapper>
       <LeftAxis>{data.map((d: Chunk, i: number) => {
-        let stepWidthPct = d.percent_number || 0
-        let stepText = getChartText(d.percent)
-        let textWidth = stepText.width
-        let stepWidth = element.getBoundingClientRect().width * stepWidthPct
-        let stepHeight = 1 / data.length * element.getBoundingClientRect().height
-        let outerStepTextY = (stepHeight + ((1 / data.length / 2) * element.getBoundingClientRect().height) - (stepText.height / 4))
-        let textWithin = textWidth < stepWidth ? true : false
         return (
           <AxisContainer height={stepHeight}><AxisLabel>{d.label}</AxisLabel></AxisContainer>
         )
       })}</LeftAxis>
-      <Chart>{data.map((d: Chunk, i: number) => {
+      <Chart>{data.length > 0 && data.map((d: Chunk, i: number) => {
         let stepWidthPct = d.percent_number || 0
-        let stepText = getChartText(d.percent)
+        let stepText = getChartText(d.percent, config.bar_scale)
         let textWidth = stepText.width
         let stepWidth = element.getBoundingClientRect().width * stepWidthPct
-        let stepHeight = 1 / data.length * element.getBoundingClientRect().height
-        let outerStepTextY = (stepHeight * i + ((1 / data.length / 2) * element.getBoundingClientRect().height)) + (stepText.height / 4)
+        // begin of step Y + half of step Y - quarter of text height
+        let outerStepTextY = (stepHeight * i + (stepHeight / 2) - (stepText.height / 4))
         let textWithin = textWidth < stepWidth ? true : false
         return (
         <FunnelStepWrapper height={stepHeight}>
@@ -64,6 +65,8 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
             color={config.bar_colors[i]}
             width={stepWidthPct - 0.02}
             height={stepHeight}
+            onMouseMove={(e)=>{setTooltip({x: e.clientX + 10, y: e.clientY, content: d.label +": "+d.rendered+" ("+d.percent+")"})}}
+            onMouseLeave={(e)=>{setTooltip(undefined)}}
             onClick={(e: any)=>{
               // @ts-ignore
               openDrillMenu({
@@ -72,24 +75,20 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
               });
             }}
           >
-            {textWithin && <FunnelStepContents font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
+            {textWithin && <FunnelStepContents font_size={config.bar_scale} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
           </FunnelStep>
-          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors[i]} padding={stepWidthPct/2} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
+          {!textWithin && <FunnelStepOuterContents font_size={config.bar_scale} color={config.bar_colors[i]} padding={stepWidthPct/2} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
         </FunnelStepWrapper>
         )
       })}</Chart>
       <RightAxis>{data.map((d: Chunk, i: number) => {
-        let stepWidthPct = d.percent_number || 0
-        let stepText = getChartText(d.percent)
-        let textWidth = stepText.width
-        let stepWidth = element.getBoundingClientRect().width * stepWidthPct
-        let stepHeight = 1 / data.length * element.getBoundingClientRect().height
-        let outerStepTextY = (stepHeight + ((1 / data.length / 2) * element.getBoundingClientRect().height) - (stepText.height / 4))
-        let textWithin = textWidth < stepWidth ? true : false
         return (
           <AxisContainer height={stepHeight}><AxisLabel>{d.rendered}</AxisLabel></AxisContainer>
         )
       })}</RightAxis>
+      {tooltip && <div style={{position: "absolute", fontSize: "0.9em", left: tooltip.x, color: "white",top: tooltip.y, opacity: .9, backgroundColor: "#282828", borderRadius: 5, padding: "10px"}}>
+        {tooltip.content}
+      </div>}
     </ChartWrapper>
   )
 }

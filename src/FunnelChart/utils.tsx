@@ -29,8 +29,9 @@ import { Chunk } from "../types"
 import { } from "../utils"
 import styled from "styled-components"
 
-export const ChartText: React.FC<{text: string | undefined, setWidth: (w: number) => void, setHeight: (h: number) => void}> = ({ 
+export const ChartText: React.FC<{text: string | undefined, fontSize: number, setWidth: (w: number) => void, setHeight: (h: number) => void}> = ({ 
   text,
+  fontSize,
   setWidth,
   setHeight,
  }) => {
@@ -40,13 +41,13 @@ export const ChartText: React.FC<{text: string | undefined, setWidth: (w: number
     setWidth(ref.current.offsetWidth)
     // @ts-ignore
     setHeight(ref.current.offsetHeight)
-  }, [ref.current]);
+  }, [ref.current, fontSize]);
   return <text ref={ref}>{text}</text>;
 }
 
-export const getChartText = (stepLabel: string | undefined) => {
+export const getChartText = (stepLabel: string | undefined, fontSize: number) => {
   const [ computedWidth, setComputedWidth ] = React.useState(0);
   const [ computedHeight, setComputedHeight ] = React.useState(0);
-  let chartText = (<ChartText text={stepLabel} setWidth={setComputedWidth} setHeight={setComputedHeight}/>)
+  let chartText = (<ChartText text={stepLabel} fontSize={fontSize} setWidth={setComputedWidth} setHeight={setComputedHeight}/>)
   return {element: chartText, width: computedWidth, height: computedHeight };
 }
