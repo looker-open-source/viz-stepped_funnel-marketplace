@@ -30,6 +30,7 @@ import { Chunk } from "../types"
 import { VizzyTooltip } from "../VizzyUtils/VizzyTooltip"
 import { getChartText, getAxisLabel } from "./utils"
 import styled from "styled-components"
+import { Tooltip, useTooltip } from "../Tooltip/Tooltip"
 
 export interface TooltipProps {
   x: number
@@ -43,7 +44,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
   element,
   openDrillMenu,
  }) => {
-  const [ tooltip, setTooltip ] = useState<TooltipProps | undefined>(undefined)
+  const {tooltipContainer, initalState, tooltipMove, tooltipOut} = useTooltip();
   let stepHeight = 1 / data.length * element.getBoundingClientRect().height
   let funnelColors = config.bar_colors && config.bar_reverse_colors ? config.bar_colors.reverse() : config.bar_colors
   return (
@@ -93,6 +94,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         )
       })}</RightAxis>
       {tooltip && <VizzyTooltip metadata={tooltip}/>}
+      <Tooltip {...initalState} ref={tooltipContainer} />
     </ChartWrapper>
   )
 }

@@ -134,6 +134,10 @@ export interface VisOption {
   supports?: string[]
 }
 
+interface VisOptionSelection {
+  [key: string]: string
+}
+
 export interface VisualizationError {
   group?: string
   message?: string
