@@ -38,7 +38,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
  }) => {
   return (
     <ChartWrapper>
-      <LeftAxis>{data.map((d: Chunk, i: number) => {
+      <LeftAxis>{data.length > 0 && data.map((d: Chunk, i: number) => {
         let stepWidthPct = d.percent_number || 0
         let stepText = getChartText(d.percent)
         let textWidth = stepText.width
@@ -61,7 +61,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         return (
         <FunnelStepWrapper height={stepHeight}>
           <FunnelStep 
-            color={config.bar_colors[i]}
+            color={config.bar_colors && config.bar_colors[i]}
             width={stepWidthPct - 0.02}
             height={stepHeight}
             onClick={(e: any)=>{
@@ -74,7 +74,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
           >
             {textWithin && <FunnelStepContents font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
           </FunnelStep>
-          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors[i]} padding={stepWidthPct/2} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
+          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors && config.bar_colors[i]} padding={stepWidthPct/2} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
         </FunnelStepWrapper>
         )
       })}</Chart>
