@@ -87,7 +87,7 @@ export function useTooltip() {
     setWindowWidth(window.innerWidth)
   }, [])
 
-  const handleMouseMove = (event: MouseEvent, datum: Chunk) => {
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>, datum: Chunk) => {
     const x = event.clientX
     const y = event.clientY
       // @ts-ignore

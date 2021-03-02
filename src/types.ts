@@ -1,3 +1,5 @@
+import { select, values } from "d3"
+
 // API Globals
 export interface Looker {
   plugins: {
@@ -9,6 +11,7 @@ export interface Looker {
 
 export interface Chunk {
   label: string
+  name?: string
   percent?: string
   value: number
   rendered: string | Cell | undefined
@@ -125,6 +128,10 @@ export interface VisOption {
   supports?: string[]
 }
 
+interface VisOptionSelection {
+  [key: string]: string
+}
+
 export interface VisualizationError {
   group?: string
   message?: string
@@ -143,7 +150,9 @@ export interface MarketplaceVizHelpers {
   makeString: (section: string, label: string, init: string, order?: number, parent?: string, parentObj?: any) => VisOption,
   makeColor: (section: string, label: string, order?: number, parentKey?: string, parentObj?: any) => VisOption,
   dependToggle: (section: string, label: string, init: boolean, parentKey?: string, parentObj?: any) => VisOption,
-  dependString: (section: string, label: string, init: string, parentKey?: string, parentObj?: any) => VisOption
+  dependString: (section: string, label: string, init: string, parentKey?: string, parentObj?: any) => VisOption,
+  makeNumber: (section: string, label: string, init: number, order?: number, parent?: string, parentObj?: any) => VisOption
+  makeList: (section: string, label: string, init: string, choices: VisOptionSelection[], order?: number, parent?: string, parentObj?: any) => VisOption,
 }
 
 export const Vizzy: MarketplaceVizHelpers = {
@@ -174,6 +183,15 @@ export const Vizzy: MarketplaceVizHelpers = {
       order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
     }
   },
+  makeNumber(section: string, label: string, init: number, order?: number, parentKey?: string, parentObj?: any): VisOption {
+    return {
+      type: "number",
+      label: label,
+      default: init,
+      section: section,
+      order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
+    }
+  },
   dependString(section: string, label: string, init: string, parentKey?: string, parentObj?: any): VisOption {
     return {
       type: "string",
@@ -190,6 +208,17 @@ export const Vizzy: MarketplaceVizHelpers = {
       section: section,
       display: "colors",
       order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
+    }
+  },
+  makeList(section: string, label: string, init: string, choices: VisOptionSelection[], order?: number, parentKey?: string, parentObj?: any): VisOption {
+    return {
+      type: "string",
+      label: label,
+      default: init,
+      display: "select",
+      section: section,
+      order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10,
+      values: choices
     }
   }
 }

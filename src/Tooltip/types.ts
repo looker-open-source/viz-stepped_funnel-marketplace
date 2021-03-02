@@ -16,7 +16,6 @@ export const defaultTooltipState: TooltipState = {
   y: 0,
 }
 
-
 export interface TooltipField {
   datum: Chunk,
   fields: { 

@@ -29,6 +29,47 @@ const vis: SteppedFunnelChart = {
     label_right_axis: Vizzy.makeToggle("Axes", "Label Right Axis", false, 2),
     bar_colors: Vizzy.makeColor("Bars", "Palette", 1),
     autosort: Vizzy.makeToggle("Bars", "Autosort", false, 2),
+    // TODO: Implement below options, font_size semi-implemented in 
+    font_size: Vizzy.makeNumber("Bars", "Font Size", 2),
+    label_color: Vizzy.makeToggle("Labels", "Color Label", false, 2),
+    bar_reverse_colors: Vizzy.makeToggle("Bars", "Reverse Colors", false, 2),
+    bar_orientation: Vizzy.makeList("Labels", "Orientation", "automatic",
+    [
+      {"Automatic": "automatic"},
+      {"Data in Rows": "data_in_rows"},
+      {"Data in Columns": "data_in_columns"}
+    ]
+    ,2),
+    label_position: Vizzy.makeList("Labels", "Label Position", "left", 
+      [
+        {"Left": "left"},
+        {"Inline": "inline"},
+        {"Right": "right"},
+        {"Hidden": "hidden"}
+      ]
+    ,2),
+    label_percent_type: Vizzy.makeList("Labels", "Percent Type", "percent_of_max", 
+      [
+        {"Percent of Max": "percent_of_max"},
+        {"Percent of Prior Row": "percent_of_prior_row"}
+      ]
+    ,2),
+    label_percent_position: Vizzy.makeList("Labels", "Percent Position", "inline", 
+      [
+        {"Left": "left"},
+        {"Inline": "inline"},
+        {"Right": "right"},
+        {"Hidden": "hidden"}
+      ]
+    ,2),
+    label_value_position: Vizzy.makeList("Labels", "Value Position","right",
+      [
+        {"Left": "left"},
+        {"Inline": "inline"},
+        {"Right": "right"},
+        {"Hidden": "hidden"}
+      ]
+    ,2),
   },
   // this happens exactly once
   create(element, config) {
@@ -54,8 +95,10 @@ const vis: SteppedFunnelChart = {
     inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
     let chunkedData: Chunk[] = inputFields.map((fieldName: string) => {
       let datum = inputRow[fieldName]
+      let fieldQr = queryResponse.fields.measure_like.filter((f: any) => f.name === fieldName)[0]
       return {
-        label: fieldName,
+        label: fieldQr.label_short,
+        name: fieldName,
         value: datum.value,
         rendered: datum.rendered,
         links: datum.links as Link[]
