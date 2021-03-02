@@ -29,6 +29,7 @@ import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterConten
 import { Chunk } from "../types"
 import { getChartText } from "./utils"
 import styled from "styled-components"
+import { Tooltip, useTooltip } from "../Tooltip/Tooltip"
 
 export const FunnelChart: React.FC<FunnelChartProps> = ({ 
   data,
@@ -36,6 +37,8 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
   element,
   openDrillMenu,
  }) => {
+  //There's probably a better way to do this!
+  const {tooltipContainer, initalState, tooltipMove, tooltipOut} = useTooltip();
   return (
     <ChartWrapper>
       {data.map((d: Chunk, i: number) => {
@@ -51,6 +54,8 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
             color={config.bar_colors[i]}
             width={stepWidthPct}
             heightShare={1 / data.length}
+            onMouseMove={(e: any) => tooltipMove(e, d)}
+            onMouseOut={() => tooltipOut()}
             onClick={(e: any)=>{
               // @ts-ignore
               openDrillMenu({
@@ -65,6 +70,10 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         </FunnelStepWrapper>
         )
       })}
+      <Tooltip 
+        {...initalState} 
+        ref={tooltipContainer} 
+      />
     </ChartWrapper>
   )
 }

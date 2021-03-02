@@ -4,6 +4,8 @@ import { HelloWorld } from './HelloWorld'
 import { handleErrors } from './utils'
 import JsonViewer from './JsonViewer'
 import {FunnelChart} from './FunnelChart/FunnelChart'
+import {Tooltip, useTooltip} from "./Tooltip/Tooltip"
+import {ComponentsProvider} from "@looker/components"
 
 import {
   Cell,
@@ -72,12 +74,14 @@ const vis: SteppedFunnelChart = {
     })
     // render chart
     this.chart = ReactDOM.render(
+      <ComponentsProvider>
       <FunnelChart 
         data={chunkedData} 
         config={config} 
         element={element} 
         openDrillMenu={LookerCharts.Utils.openDrillMenu}
-      />, 
+      />
+      </ComponentsProvider>,
       element
     )
 
