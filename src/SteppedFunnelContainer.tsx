@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { HelloWorld } from './HelloWorld'
+import { HelloWorld } from './VizzyUtils/HelloWorld'
 import { handleErrors } from './utils'
-import JsonViewer from './JsonViewer'
+import JsonViewer from './VizzyUtils/JsonViewer'
 import {FunnelChart} from './FunnelChart/FunnelChart'
 
 import {
@@ -23,55 +23,63 @@ declare var LookerCharts: LookerChartUtils
 const vis: SteppedFunnelChart = {
   // initial options applied to viz
   options: {
+    // AXES
     label_left_axis: Vizzy.makeToggle("Axes", "Label Left Axis", false, 1),
     label_right_axis: Vizzy.makeToggle("Axes", "Label Right Axis", false, 2),
+
+    // BARS
     bar_colors: Vizzy.makeColor("Bars", "Palette", 1),
     autosort: Vizzy.makeToggle("Bars", "Autosort", false, 2),
-    // TODO: Implement below options, font_size semi-implemented in 
-    font_size: Vizzy.makeNumber("Bars", "Font Size", 2),
-    label_color: Vizzy.makeToggle("Labels", "Color Label", false, 2),
-    bar_reverse_colors: Vizzy.makeToggle("Bars", "Reverse Colors", false, 2),
+    font_size: Vizzy.makeNumber("Bars", "Font Size", 2, 3),
+
+    // LABELS
+    // TODO: decide on deprecating this
+    // label_color: Vizzy.makeToggle("Labels", "Color Label", false, 1),
     bar_orientation: Vizzy.makeList("Labels", "Orientation", "automatic",
     [
       {"Automatic": "automatic"},
       {"Data in Rows": "data_in_rows"},
       {"Data in Columns": "data_in_columns"}
-    ]
+    ],
     2),
-    label_position: Vizzy.makeList("Labels", "Label Position", "left", 
-      [
-        {"Left": "left"},
-        {"Inline": "inline"},
-        {"Right": "right"},
-        {"Hidden": "hidden"}
-      ]
-    ,2),
-    label_percent_type: Vizzy.makeList("Labels", "Percent Type", "percent_of_max", 
+    percent_type: Vizzy.makeList("Labels", "Percent Type", "percent_of_max", 
       [
         {"Percent of Max": "percent_of_max"},
-        {"Percent of Prior Row": "percent_of_prior_row"}
+        {"Percent of Prior": "percent_of_prior"}
       ]
-    ,2),
-    label_percent_position: Vizzy.makeList("Labels", "Percent Position", "inline", 
+    ,
+    3),
+    label_position: Vizzy.makeSmallList("Labels", "Label", "left", 
       [
         {"Left": "left"},
         {"Inline": "inline"},
         {"Right": "right"},
         {"Hidden": "hidden"}
       ]
-    ,2),
-    label_value_position: Vizzy.makeList("Labels", "Value Position","right",
+    ,
+    4),
+    label_percent_position: Vizzy.makeSmallList("Labels", "Percent", "inline", 
       [
         {"Left": "left"},
         {"Inline": "inline"},
         {"Right": "right"},
         {"Hidden": "hidden"}
       ]
-    ,2),
+    ,
+    5),
+    label_value_position: Vizzy.makeSmallList("Labels", "Value","right",
+      [
+        {"Left": "left"},
+        {"Inline": "inline"},
+        {"Right": "right"},
+        {"Hidden": "hidden"}
+      ]
+    ,
+    6),
   },
   // this happens exactly once
   create(element, config) {
-    this.chart = ReactDOM.render(<FunnelChart data={[]} config={config} element={element} openDrillMenu={LookerCharts.Utils.openDrillMenu}/>, element)
+    // DO NOTHING
   },
   // this happens for every render n > 0
   updateAsync(data, element, config, queryResponse, details, doneRendering) {
@@ -82,6 +90,9 @@ const vis: SteppedFunnelChart = {
     // add any dynamic options
     this.options.left_axis_label = config.label_left_axis && Vizzy.dependString("Axes", "Left Axis Label", "", "label_left_axis", vis)
     this.options.right_axis_label = config.label_right_axis && Vizzy.dependString("Axes", "Right Axis Label", "", "label_right_axis", vis)
+    this.options.bar_reverse_colors = Vizzy.dependToggle("Bars", "Reverse Colors", false, "bar_colors", vis)
+    // TODO: decide on deprecating this
+    // this.options.label_color_code = config.label_color && Vizzy.dependSingleColor("Labels", "", "label_color", vis)
 
     // register new options if options has changed since last render
     if (JSON.stringify(previousOptions) !== JSON.stringify(this.options)) {
@@ -106,11 +117,17 @@ const vis: SteppedFunnelChart = {
       return a.value > b.value ? -1 : 1
     })
     let maxValue = config.autosort ? chunkedData[0].value : Math.max(...chunkedData.map((c: Chunk)=>c.value))
-    chunkedData = chunkedData.map((c: Chunk) => {
+    let priorRowCalc = config.percent_type === "percent_of_prior" && chunkedData.map((c: Chunk, i: number) => {
+      let indexBefore =  i > 0 ? i - 1 : 0
+      let denom = chunkedData[indexBefore].value
+      return (c.value / denom)
+    })
+    chunkedData = chunkedData.map((c: Chunk, i: number) => {
       return {
         ...c,
-        percent: ((c.value / maxValue)*100).toString().substring(0, 4) + "%",
-        percent_number: (c.value / maxValue)
+        percent_rendered: ((priorRowCalc && priorRowCalc[i] || c.value / maxValue)*100).toString().substring(0, 4) + "%",
+        percent_number: (priorRowCalc && priorRowCalc[i] || (c.value / maxValue)),
+        percent_container: (priorRowCalc && (priorRowCalc[i] / Math.max(...priorRowCalc))) || (c.value / maxValue)
       }
     })
     // render chart

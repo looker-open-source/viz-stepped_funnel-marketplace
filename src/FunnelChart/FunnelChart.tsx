@@ -25,9 +25,10 @@
  */
 
 import React, { useRef, useLayoutEffect, useState } from "react"
-import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterContents, FunnelStepWrapper, ChartWrapper, AxisContainer, AxisLabel, LeftAxis, Chart, RightAxis } from "./types"
+import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterContents, FunnelStepWrapper, ChartWrapper, AxisContainer, AxisSubLabel, LeftAxis, Chart, RightAxis } from "./types"
 import { Chunk } from "../types"
-import { getChartText } from "./utils"
+import { VizzyTooltip } from "../VizzyUtils/VizzyTooltip"
+import { getChartText, getAxisLabel } from "./utils"
 import styled from "styled-components"
 
 export interface TooltipProps {
@@ -44,35 +45,31 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
  }) => {
   const [ tooltip, setTooltip ] = useState<TooltipProps | undefined>(undefined)
   let stepHeight = 1 / data.length * element.getBoundingClientRect().height
+  let funnelColors = config.bar_colors && config.bar_reverse_colors ? config.bar_colors.reverse() : config.bar_colors
   return (
     <ChartWrapper>
-      <LeftAxis>{data.length > 0 && data.map((d: Chunk, i: number) => {
-        let stepWidthPct = d.percent_number || 0
-        let stepText = getChartText(d.percent)
-        let textWidth = stepText.width
-        let stepWidth = element.getBoundingClientRect().width * stepWidthPct
-        let stepHeight = 1 / data.length * element.getBoundingClientRect().height
-        let outerStepTextY = (stepHeight + ((1 / data.length / 2) * element.getBoundingClientRect().height) - (stepText.height / 4))
-        let textWithin = textWidth < stepWidth ? true : false
+      <LeftAxis>
+        {config.label_left_axis && config.left_axis_label !== "" && getAxisLabel(config.left_axis_label, "left", element.getBoundingClientRect().height).element}
+        {data.map((d: Chunk, i: number) => {
         return (
-          <AxisContainer height={stepHeight}><AxisLabel>{d.label}</AxisLabel></AxisContainer>
+          <AxisContainer height={stepHeight + (i * 2)}><AxisSubLabel>{d.label}</AxisSubLabel></AxisContainer>
         )
       })}</LeftAxis>
-      <Chart>{data.length > 0 && data.map((d: Chunk, i: number) => {
-        let stepWidthPct = d.percent_number || 0
-        let stepText = getChartText(d.percent, config.bar_scale)
-        let textWidth = stepText.width
+      <Chart>{data.map((d: Chunk, i: number) => {
+        let stepWidthPct = d.percent_container || 0
         let stepWidth = element.getBoundingClientRect().width * stepWidthPct
-        // begin of step Y + half of step Y - quarter of text height
-        let outerStepTextY = (stepHeight * i + (stepHeight / 2) - (stepText.height / 4))
+        let stepText = getChartText(d.percent_rendered, config.font_size)
+        let textWidth = stepText.width
+        // outerStepTextY = begin of step Y + half of step Y - quarter of text height
+        let outerStepTextY = (stepHeight * i + (stepHeight / 2) - (stepText.height / 5))
         let textWithin = textWidth < stepWidth ? true : false
         return (
         <FunnelStepWrapper height={stepHeight}>
           <FunnelStep 
-            color={config.bar_colors && config.bar_colors[i]}
+            color={funnelColors[i]}
             width={stepWidthPct - 0.02}
             height={stepHeight}
-            onMouseMove={(e)=>{setTooltip({x: e.clientX + 10, y: e.clientY, content: d.label +": "+d.rendered+" ("+d.percent+")"})}}
+            onMouseMove={(e)=>{setTooltip({x: e.clientX + 10, y: e.clientY, content: d.label +": "+d.rendered+" ("+d.percent_rendered+")"})}}
             onMouseLeave={(e)=>{setTooltip(undefined)}}
             onClick={(e: any)=>{
               // @ts-ignore
@@ -82,20 +79,20 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
               });
             }}
           >
-            {textWithin && <FunnelStepContents font_size={config.bar_scale} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
+            {textWithin && <FunnelStepContents font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
           </FunnelStep>
-          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors && config.bar_colors[i]} padding={stepWidthPct/2} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
+          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={funnelColors[i]} padding={stepWidthPct/2} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
         </FunnelStepWrapper>
         )
       })}</Chart>
-      <RightAxis>{data.map((d: Chunk, i: number) => {
+      <RightAxis>
+      {config.label_right_axis && config.right_axis_label !== "" && getAxisLabel(config.right_axis_label, "right", element.getBoundingClientRect().height).element}
+      {data.map((d: Chunk, i: number) => {
         return (
-          <AxisContainer height={stepHeight}><AxisLabel>{d.rendered}</AxisLabel></AxisContainer>
+          <AxisContainer height={stepHeight + (i*2)}><AxisSubLabel>{d.rendered}</AxisSubLabel></AxisContainer>
         )
       })}</RightAxis>
-      {tooltip && <div style={{position: "absolute", fontSize: "0.9em", left: tooltip.x, color: "white",top: tooltip.y, opacity: .9, backgroundColor: "#282828", borderRadius: 5, padding: "10px"}}>
-        {tooltip.content}
-      </div>}
+      {tooltip && <VizzyTooltip metadata={tooltip}/>}
     </ChartWrapper>
   )
 }

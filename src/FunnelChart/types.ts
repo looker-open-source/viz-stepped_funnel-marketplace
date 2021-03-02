@@ -58,7 +58,7 @@ export const Chart = styled.div`
   width: 80%;
   float: left;
 `
-export const AxisLabel = styled.span`
+export const AxisSubLabel = styled.span`
   display: table-cell; 
   vertical-align: middle;
   // TODO: Label Scale option
