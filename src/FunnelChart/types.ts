@@ -68,9 +68,9 @@ export const AxisLabel = styled.span`
 export const FunnelStepOuterContents = styled.span`
   overflow: hidden;
   // TODO: Label Scale option
-  font-size: 3em;
+  font-size: ${(props: FunnelStepOuterContentsProps) => props.font_size}em;
   // TODO: Labels > Color Label Toggle > Color Label
-  color: ${(props: FunnelStepOuterContentsProps) => props.color} em;
+  color: ${(props: FunnelStepOuterContentsProps) => props.color};
   position: absolute;
   left: 50%;
   z-index: -1;
