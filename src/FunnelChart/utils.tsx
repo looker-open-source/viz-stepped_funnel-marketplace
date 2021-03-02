@@ -51,3 +51,39 @@ export const getChartText = (stepLabel: string | undefined, fontSize: number) =>
   let chartText = (<ChartText text={stepLabel} fontSize={fontSize} setWidth={setComputedWidth} setHeight={setComputedHeight}/>)
   return {element: chartText, width: computedWidth, height: computedHeight };
 }
+
+export const AxisLabelText: React.FC<{text: string | undefined, type: string, parentHeight: number, setWidth: (w: number) => void, setHeight: (h: number) => void}> = ({ 
+  text,
+  type,
+  parentHeight,
+  setWidth,
+  setHeight,
+ }) => {
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    // @ts-ignore
+    setWidth(ref.current.offsetWidth)
+    // @ts-ignore
+    setHeight(ref.current.offsetHeight)
+  }, [ref.current, text]);
+  return <text style={{
+    transform:`rotate(${type === "left" ? "270" : "90"}deg)`, 
+    position: "absolute",
+    height: 0,
+    width: 0,
+    whiteSpace: "nowrap",
+    left:`${type === "left" && 0}px`,
+    right:`${type === "right" && 5}px`,
+    top: (parentHeight * 0.5) + (text || "").length * (type === "left" ? 3 : -3),
+    color: "rgb(149, 149, 149)",
+    fontWeight: 500,
+  }} ref={ref}>{text}</text>;
+}
+
+export const getAxisLabel = (stepLabel: string | undefined, type: string, parentHeight: number) => {
+  const [ computedWidth, setComputedWidth ] = React.useState(0);
+  const [ computedHeight, setComputedHeight ] = React.useState(0);
+  let chartText = (<AxisLabelText text={stepLabel} type={type} parentHeight={parentHeight} setWidth={setComputedWidth} setHeight={setComputedHeight}/>)
+  return {element: chartText, width: computedWidth, height: computedHeight };
+}
+
