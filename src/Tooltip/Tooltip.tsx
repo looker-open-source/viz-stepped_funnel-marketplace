@@ -28,7 +28,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Sanitizer } from '../utils'
 import { defaultTooltipState, TooltipState } from './types'
 import { computeTooltipPosition } from './utils'
-import { Flex, FlexItem, Text } from '@looker/components'
 import { Chunk } from '../types'
 
 export const Tooltip = React.forwardRef(
@@ -49,24 +48,13 @@ export const Tooltip = React.forwardRef(
       top: `${y}px`,
       left: `${x}px`,
     }
+    console.log(datum)
 
     //TODO: here is where we'd select additional charts to render 
     let tooltipDef;
     if (type === "default") {
       tooltipDef = (
-        <Flex flexDirection="column">
-        {datum?.label && (
-          <FlexItem mb="xsmall" data-testid="tooltip-category">
-            <Text
-              fontSize="xsmall"
-              dangerouslySetInnerHTML={{
-                __html: Sanitizer.sanitizeDOM(
-                  `${datum.label}: ${datum?.rendered} (${datum?.percent})`?? '')
-                }}
-            />
-          </FlexItem>
-        )}
-      </Flex>
+
       )
     }
 
@@ -78,7 +66,7 @@ export const Tooltip = React.forwardRef(
   }
 )
 
-export function useTooltip() {
+export function useTooltip({content}) {
   const [windowWidth, setWindowWidth] = useState(0)
   const tooltipContainer = useRef<HTMLDivElement>(null)
   const [hovered, setHovered] = useState<TooltipState>(defaultTooltipState)

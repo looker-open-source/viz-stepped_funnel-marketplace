@@ -43,7 +43,14 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
   element,
   openDrillMenu,
  }) => {
-  const {tooltipContainer, initalState, tooltipMove, tooltipOut} = useTooltip();
+
+  const {
+    tooltipContainer, 
+    initalState, 
+    tooltipMove, 
+    tooltipOut
+  } = useTooltip({ content: <Scatterplot data={data}/> });
+
   let stepHeight = 1 / data.length * element.getBoundingClientRect().height
   return (
     <ChartWrapper>

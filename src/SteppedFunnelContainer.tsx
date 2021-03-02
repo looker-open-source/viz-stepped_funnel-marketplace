@@ -4,8 +4,7 @@ import { HelloWorld } from './HelloWorld'
 import { handleErrors } from './utils'
 import JsonViewer from './JsonViewer'
 import {FunnelChart} from './FunnelChart/FunnelChart'
-import {Tooltip, useTooltip} from "./Tooltip/Tooltip"
-import {ComponentsProvider} from "@looker/components"
+import {ComponentsProvider, getNextFocus} from "@looker/components"
 
 import {
   Cell,
@@ -17,6 +16,7 @@ import {
   VisOptions,
   Link, SteppedFunnelChart, Vizzy, 
 } from './types'
+import { prepareTurtlesQuery, TURTLES } from "./turtles";
 
 // Global values provided via the API
 declare var looker: Looker
@@ -73,7 +73,16 @@ const vis: SteppedFunnelChart = {
   },
   // this happens exactly once
   create(element, config) {
-    this.chart = ReactDOM.render(<FunnelChart data={[]} config={config} element={element} openDrillMenu={LookerCharts.Utils.openDrillMenu}/>, element)
+    this.chart = ReactDOM.render(
+    <ComponentsProvider>
+      <FunnelChart 
+        data={[]} 
+        config={config} 
+        element={element} 
+        openDrillMenu={LookerCharts.Utils.openDrillMenu}
+      />
+    </ComponentsProvider>, 
+    element)
   },
   // this happens for every render n > 0
   updateAsync(data, element, config, queryResponse, details, doneRendering) {
@@ -91,9 +100,10 @@ const vis: SteppedFunnelChart = {
     }
 
     let inputRow = data[0]
+    let turtleQuery = Object.keys(inputRow).find(e => e.startsWith(TURTLES))
     let inputFields =  config.input_fields || queryResponse.fields.measure_like.map((f: any) => f.name)
     inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
-    let chunkedData: Chunk[] = inputFields.map((fieldName: string) => {
+    let chunkedData: Chunk[] = inputFields.filter((e: string) => !e.startsWith(TURTLES)).map((fieldName: string) => {
       let datum = inputRow[fieldName]
       let fieldQr = queryResponse.fields.measure_like.filter((f: any) => f.name === fieldName)[0]
       return {
@@ -101,7 +111,8 @@ const vis: SteppedFunnelChart = {
         name: fieldName,
         value: datum.value,
         rendered: datum.rendered,
-        links: datum.links as Link[]
+        links: datum.links as Link[],
+        ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, fieldName, turtleQuery)})
       }
     })
     config.autosort && chunkedData.sort((a: Chunk, b: Chunk) => {
