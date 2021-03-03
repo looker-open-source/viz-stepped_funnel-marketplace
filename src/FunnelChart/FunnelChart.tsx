@@ -87,7 +87,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         )
       })}</Chart>
       <RightAxis config={config} data={data} element={element} stepHeight={stepHeight} width={rightW}/>
-      <Tooltip {...initalState} ref={tooltipContainer} chartType={"bar"} />
+      <Tooltip {...initalState} ref={tooltipContainer} chartType={'line'} scale={'time'}/>
     </ChartWrapper>
   )
 }
