@@ -25,20 +25,20 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react'
-import { Sanitizer } from '../utils'
 import { defaultTooltipState, TooltipState } from './types'
 import { computeTooltipPosition } from './utils'
 import { Chunk } from '../types'
+import { DefaultToolTip } from './DefaultTooltip'
+import { VegaChart } from './vega-charts/VegaChart'
 
 export const Tooltip = React.forwardRef(
-  ({ datum, visible, x, y, type }: TooltipState, ref: React.Ref<HTMLDivElement>) => {
+  ({ datum, visible, x, y, type, scale }: TooltipState, ref: React.Ref<HTMLDivElement>) => {
   // We can't use styled components here for performance reasons.
   // x & y change way too frequently.
     const styles: React.CSSProperties = {
       backgroundColor: 'rgba(0, 0, 0, 0.75)',
       borderRadius: '4px',
       color: 'white',
-      maxWidth: '300px',
       overflow: 'hidden',
       padding: '12px',
       textOverflow: 'ellipsis',
@@ -48,14 +48,17 @@ export const Tooltip = React.forwardRef(
       top: `${y}px`,
       left: `${x}px`,
     }
-    console.log(datum)
 
-    //TODO: here is where we'd select additional charts to render 
     let tooltipDef;
     if (type === "default") {
-      tooltipDef = (
-
-      )
+      tooltipDef = <DefaultToolTip datum={datum} />
+    } else {
+      tooltipDef = 
+        <VegaChart 
+          datum={datum} 
+          chart={type as any} 
+          scale={scale}
+        />
     }
 
     return  (
@@ -66,10 +69,10 @@ export const Tooltip = React.forwardRef(
   }
 )
 
-export function useTooltip({content}) {
+export function useTooltip() {
   const [windowWidth, setWindowWidth] = useState(0)
-  const tooltipContainer = useRef<HTMLDivElement>(null)
   const [hovered, setHovered] = useState<TooltipState>(defaultTooltipState)
+  const tooltipContainer = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
@@ -84,7 +87,6 @@ export function useTooltip({content}) {
     const position = computeTooltipPosition(x, y, tooltipWidth, windowWidth)
 
     setHovered({
-      type: hovered.type,
       datum: datum,
       visible: true,
       x: position.x,

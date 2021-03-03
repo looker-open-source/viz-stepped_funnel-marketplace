@@ -30,6 +30,7 @@ import { Chunk } from "../types"
 import { getChartText } from "./utils"
 import styled from "styled-components"
 import { Tooltip, useTooltip } from "../Tooltip/Tooltip"
+import { VegaChart } from "../Tooltip/vega-charts/VegaChart"
 
 export interface TooltipProps {
   x: number
@@ -49,7 +50,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
     initalState, 
     tooltipMove, 
     tooltipOut
-  } = useTooltip({ content: <Scatterplot data={data}/> });
+  } = useTooltip();
 
   let stepHeight = 1 / data.length * element.getBoundingClientRect().height
   return (
@@ -101,7 +102,12 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
           <AxisContainer height={stepHeight}><AxisLabel>{d.rendered}</AxisLabel></AxisContainer>
         )
       })}</RightAxis>
-      <Tooltip {...initalState} ref={tooltipContainer} />
+      <Tooltip 
+        {...initalState} 
+        ref={tooltipContainer} 
+        type={"bar"}
+        scale={"time"}
+      />
     </ChartWrapper>
   )
 }

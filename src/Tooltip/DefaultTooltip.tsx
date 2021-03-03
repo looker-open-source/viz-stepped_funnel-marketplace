@@ -1,7 +1,9 @@
 import { Flex, FlexItem, Text } from '@looker/components'
+import React from 'react'
 import { Chunk } from '../types'
+import { Sanitizer } from '../utils'
 
-export function DefaultToolTip({datum: Chunk}) {
+export function DefaultToolTip({datum}: any) {
   return (
     <Flex flexDirection="column">
     {datum?.label && (

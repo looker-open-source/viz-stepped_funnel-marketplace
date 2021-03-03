@@ -2,7 +2,8 @@ import { Chunk } from "../types"
 
 export interface TooltipState {
   datum?: Chunk
-  type?: any
+  type?: string
+  scale?: string
   visible: boolean
   x: number
   y: number
@@ -10,7 +11,6 @@ export interface TooltipState {
 
 export const defaultTooltipState: TooltipState = {
   datum: undefined,
-  type: "default",
   visible: false,
   x: 0,
   y: 0,

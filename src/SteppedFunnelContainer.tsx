@@ -112,7 +112,7 @@ const vis: SteppedFunnelChart = {
         value: datum.value,
         rendered: datum.rendered,
         links: datum.links as Link[],
-        ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, fieldName, turtleQuery)})
+        ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, fieldName, turtleQuery, queryResponse)})
       }
     })
     config.autosort && chunkedData.sort((a: Chunk, b: Chunk) => {

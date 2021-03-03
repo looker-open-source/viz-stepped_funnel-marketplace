@@ -9,6 +9,12 @@ export interface Looker {
   }
 }
 
+export interface Turtle {
+  dimension: {[key: string]: string}
+  measure: {[key: string]: string}
+  data: any[]
+}
+
 export interface Chunk {
   label: string
   name?: string
@@ -17,6 +23,7 @@ export interface Chunk {
   rendered: string | Cell | undefined
   links: Link[]
   percent_number?: number
+  turtle: Turtle
 }
 
 export interface LookerChartUtils {
