@@ -4,6 +4,7 @@
     "moduleResolution": "node",
     "noImplicitReturns": true,
     "outDir": "./dist/",
+    "sourceMap": true,
     "strict": true,
     "lib": [ "dom", "es6", "es2015.collection" ],
     "target": "es5",

@@ -48,22 +48,14 @@ export const Tooltip = React.forwardRef(
       top: `${y}px`,
       left: `${x}px`,
     }
-
-    let tooltipDef;
-    if (chartType === "default") {
-      tooltipDef = <DefaultToolTip datum={datum} />
-    } else {
-      tooltipDef = 
-        <VegaChart 
-          datum={datum} 
-          chartType={chartType as any} 
-          scale={scale}
-        />
+    if (datum) {
+      datum.scale = scale
+      datum.chartType = chartType
     }
 
     return  (
       <div ref={ref} style={styles}>
-        {tooltipDef}
+        <DefaultToolTip datum={datum} />
       </div>
     )
   }
@@ -71,11 +63,13 @@ export const Tooltip = React.forwardRef(
 
 export function useTooltip() {
   const [windowWidth, setWindowWidth] = useState(0)
+  const [windowHeight, setWindowHeight] = useState(0)
   const [hovered, setHovered] = useState<TooltipState>(defaultTooltipState)
   const tooltipContainer = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setWindowWidth(window.innerWidth)
+    setWindowHeight(window.innerHeight)
   }, [])
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>, datum: Chunk) => {
@@ -83,8 +77,10 @@ export function useTooltip() {
     const y = event.clientY
       // @ts-ignore
     const tooltipWidth = tooltipContainer.current!.clientWidth
+     // @ts-ignore
+     const tooltipHeight = tooltipContainer.current!.clientHeight
     // @ts-ignore
-    const position = computeTooltipPosition(x, y, tooltipWidth, windowWidth)
+    const position = computeTooltipPosition(x, y, tooltipWidth, tooltipHeight, windowWidth, windowHeight)
 
     setHovered({
       chartType: hovered.chartType,

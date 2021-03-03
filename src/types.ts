@@ -21,7 +21,7 @@ export interface Chunk {
   percent?: string
   value: number
   value_rendered: string
-  links: Link[]
+  links: any
   percent_number?: number
   percent_rendered?: string
   percent_container?: number
@@ -29,7 +29,11 @@ export interface Chunk {
   left_rendered?: string
   inline_rendered?: string
   right_rendered?: string,
-  turtle?: Turtle
+  turtle?: any
+  series_color?: string
+  chartType?: any
+  scale?: any
+  sort_index?: number
 }
 
 export interface LookerChartUtils {
