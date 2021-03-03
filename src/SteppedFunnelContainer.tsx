@@ -13,6 +13,7 @@ import {
   Vizzy, 
   VisConfig,
 } from './types'
+import { prepareTurtlesQuery, TURTLES } from "./turtles";
 
 // Global values provided via the API
 declare var looker: Looker
@@ -98,9 +99,10 @@ const vis: SteppedFunnelChart = {
     }
 
     let inputRow = data[0]
+    let turtleQuery = Object.keys(inputRow).find(e => e.startsWith(TURTLES))
     let inputFields =  config.input_fields || queryResponse.fields.measure_like.map((f: any) => f.name)
     inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
-    let chunkedData: Chunk[] = inputFields.map((fieldName: string) => {
+    let chunkedData: Chunk[] = inputFields.filter((e: string) => !e.startsWith(TURTLES)).map((fieldName: string) => {
       let datum = inputRow[fieldName]
       let fieldQr = queryResponse.fields.measure_like.filter((f: any) => f.name === fieldName)[0]
       return {
@@ -108,7 +110,8 @@ const vis: SteppedFunnelChart = {
         name: fieldName,
         value: datum.value,
         value_rendered: datum.rendered,
-        links: datum.links as Link[] || []
+        links: datum.links as Link[] || [],
+        ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, fieldName, turtleQuery, queryResponse)})
       }
     })
     config.autosort && chunkedData.sort((a: Chunk, b: Chunk) => {

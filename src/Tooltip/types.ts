@@ -2,15 +2,16 @@ import { Chunk } from "../types"
 
 export interface TooltipState {
   datum?: Chunk
-  type?: any
+  chartType: string
+  scale?: string
   visible: boolean
   x: number
   y: number
 }
 
 export const defaultTooltipState: TooltipState = {
+  chartType: "default",
   datum: undefined,
-  type: "default",
   visible: false,
   x: 0,
   y: 0,

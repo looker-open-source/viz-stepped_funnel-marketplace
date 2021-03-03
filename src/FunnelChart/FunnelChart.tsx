@@ -29,6 +29,7 @@ import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterConten
 import { Chunk } from "../types"
 import { getChartText } from "./utils"
 import { Tooltip, useTooltip } from "../Tooltip/Tooltip"
+import { VegaChart } from "../Tooltip/vega-charts/VegaChart"
 import {LeftAxis, RightAxis} from "./Axes"
 
 export const FunnelChart: React.FC<FunnelChartProps> = ({ 
@@ -37,7 +38,14 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
   element,
   openDrillMenu,
  }) => {
-  const {tooltipContainer, initalState, tooltipMove, tooltipOut} = useTooltip();
+
+  const {
+    tooltipContainer, 
+    initalState, 
+    tooltipMove, 
+    tooltipOut
+  } = useTooltip();
+
   let stepHeight = 1 / data.length * element.getBoundingClientRect().height
   let funnelColors = config.bar_colors && config.bar_reverse_colors ? config.bar_colors.reverse() : config.bar_colors
   funnelColors = config.bar_colors ? config.bar_colors : []
@@ -79,7 +87,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         )
       })}</Chart>
       <RightAxis config={config} data={data} element={element} stepHeight={stepHeight} width={rightW}/>
-      <Tooltip {...initalState} ref={tooltipContainer} />
+      <Tooltip {...initalState} ref={tooltipContainer} chartType={'line'} scale={'time'}/>
     </ChartWrapper>
   )
 }

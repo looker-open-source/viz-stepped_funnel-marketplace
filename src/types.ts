@@ -9,6 +9,12 @@ export interface Looker {
   }
 }
 
+export interface Turtle {
+  dimension: {[key: string]: string}
+  measure: {[key: string]: string}
+  data: any[]
+}
+
 export interface Chunk {
   label: string
   name?: string
@@ -22,7 +28,8 @@ export interface Chunk {
   tooltip_rendered?: string
   left_rendered?: string
   inline_rendered?: string
-  right_rendered?: string
+  right_rendered?: string,
+  turtle?: Turtle
 }
 
 export interface LookerChartUtils {
