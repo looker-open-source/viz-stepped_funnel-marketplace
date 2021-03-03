@@ -24,19 +24,12 @@
 
  */
 
-import React, { useRef, useLayoutEffect, useState } from "react"
-import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterContents, FunnelStepWrapper, ChartWrapper, AxisContainer, AxisSubLabel, LeftAxis, Chart, RightAxis } from "./types"
+import React from "react"
+import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterContents, FunnelStepWrapper, ChartWrapper, Chart } from "./types"
 import { Chunk } from "../types"
-import { VizzyTooltip } from "../VizzyUtils/VizzyTooltip"
-import { getChartText, getAxisLabel } from "./utils"
-import styled from "styled-components"
+import { getChartText } from "./utils"
 import { Tooltip, useTooltip } from "../Tooltip/Tooltip"
-
-export interface TooltipProps {
-  x: number
-  y: number
-  content: string
-}
+import {LeftAxis, RightAxis} from "./Axes"
 
 export const FunnelChart: React.FC<FunnelChartProps> = ({ 
   data,
@@ -47,31 +40,30 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
   const {tooltipContainer, initalState, tooltipMove, tooltipOut} = useTooltip();
   let stepHeight = 1 / data.length * element.getBoundingClientRect().height
   let funnelColors = config.bar_colors && config.bar_reverse_colors ? config.bar_colors.reverse() : config.bar_colors
+  funnelColors = config.bar_colors ? config.bar_colors : []
+
+  let leftW = data[0].left_rendered !== "" ? .1 : 0
+  let rightW = data[0].right_rendered !== "" ? .1 : 0
+  let inlineW = 1 - leftW - rightW
   return (
     <ChartWrapper>
-      <LeftAxis>
-        {config.label_left_axis && config.left_axis_label !== "" && getAxisLabel(config.left_axis_label, "left", element.getBoundingClientRect().height).element}
-        {data.map((d: Chunk, i: number) => {
-        return (
-          <AxisContainer height={stepHeight + (i * 2)}><AxisSubLabel>{d.label}</AxisSubLabel></AxisContainer>
-        )
-      })}</LeftAxis>
-      <Chart>{data.map((d: Chunk, i: number) => {
+      <LeftAxis config={config} data={data} element={element} stepHeight={stepHeight} width={leftW}/>
+      <Chart width={inlineW}>{data.map((d: Chunk, i: number) => {
         let stepWidthPct = d.percent_container || 0
-        let stepWidth = element.getBoundingClientRect().width * stepWidthPct
-        let stepText = getChartText(d.percent_rendered, config.font_size)
+        let stepWidth = element.getBoundingClientRect().width * stepWidthPct * inlineW
+        let stepText = getChartText(d.inline_rendered, config.font_size)
         let textWidth = stepText.width
         // outerStepTextY = begin of step Y + half of step Y - quarter of text height
-        let outerStepTextY = (stepHeight * i + (stepHeight / 2) - (stepText.height / 5))
-        let textWithin = textWidth < stepWidth ? true : false
+        let outerStepTextY = ((stepHeight + 3) * i + (stepHeight / 2))
+        let textWithin = textWidth < (stepWidth*0.75) ? true : false
         return (
         <FunnelStepWrapper height={stepHeight}>
           <FunnelStep 
             color={funnelColors[i]}
             width={stepWidthPct - 0.02}
             height={stepHeight}
-            onMouseMove={(e)=>{setTooltip({x: e.clientX + 10, y: e.clientY, content: d.label +": "+d.rendered+" ("+d.percent_rendered+")"})}}
-            onMouseLeave={(e)=>{setTooltip(undefined)}}
+            onMouseMove={(e)=>{tooltipMove(e, d)}}
+            onMouseLeave={tooltipOut}
             onClick={(e: any)=>{
               // @ts-ignore
               openDrillMenu({
@@ -82,18 +74,11 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
           >
             {textWithin && <FunnelStepContents font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
           </FunnelStep>
-          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={funnelColors[i]} padding={stepWidthPct/2} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
+          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={funnelColors[i]} padding={stepWidthPct/2 + (!rightW ? .1 : 0)} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
         </FunnelStepWrapper>
         )
       })}</Chart>
-      <RightAxis>
-      {config.label_right_axis && config.right_axis_label !== "" && getAxisLabel(config.right_axis_label, "right", element.getBoundingClientRect().height).element}
-      {data.map((d: Chunk, i: number) => {
-        return (
-          <AxisContainer height={stepHeight + (i*2)}><AxisSubLabel>{d.rendered}</AxisSubLabel></AxisContainer>
-        )
-      })}</RightAxis>
-      {tooltip && <VizzyTooltip metadata={tooltip}/>}
+      <RightAxis config={config} data={data} element={element} stepHeight={stepHeight} width={rightW}/>
       <Tooltip {...initalState} ref={tooltipContainer} />
     </ChartWrapper>
   )

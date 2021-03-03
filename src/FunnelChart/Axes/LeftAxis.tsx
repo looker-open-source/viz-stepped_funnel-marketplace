@@ -24,27 +24,26 @@
 
  */
 
-import React, { useRef, useLayoutEffect } from "react"
+import React from "react"
+import { LeftAxisContainer, LeftAxisProps, AxisContainer, AxisSubLabel } from "./types"
+import { Chunk } from "../../types"
+import { getAxisLabel } from "../Axes/utils"
 
-export const ChartText: React.FC<{text: string | undefined, fontSize: number, setWidth: (w: number) => void, setHeight: (h: number) => void}> = ({ 
-  text,
-  fontSize,
-  setWidth,
-  setHeight,
+export const LeftAxis: React.FC<LeftAxisProps> = ({ 
+  data,
+  config,
+  element,
+  width,
+  stepHeight,
  }) => {
-  const ref = useRef(null);
-  useLayoutEffect(() => {
-    // @ts-ignore
-    setWidth(ref.current.offsetWidth)
-    // @ts-ignore
-    setHeight(ref.current.offsetHeight)
-  }, [ref.current, fontSize]);
-  return <text ref={ref}>{text}</text>;
-}
-
-export const getChartText = (stepLabel: string | undefined, fontSize: number) => {
-  const [ computedWidth, setComputedWidth ] = React.useState(0);
-  const [ computedHeight, setComputedHeight ] = React.useState(0);
-  let chartText = (<ChartText text={stepLabel} fontSize={fontSize} setWidth={setComputedWidth} setHeight={setComputedHeight}/>)
-  return {element: chartText, width: computedWidth, height: computedHeight };
+  return (
+    <LeftAxisContainer width={width}>
+      {config.label_left_axis && config.left_axis_label !== "" && getAxisLabel(config.left_axis_label, "left", element.getBoundingClientRect().height).element}
+      {data.map((d: Chunk, i: number) => {
+        return (
+          <AxisContainer height={stepHeight + (i * 2)}><AxisSubLabel>{d.left_rendered}</AxisSubLabel></AxisContainer>
+        )
+      })}
+    </LeftAxisContainer>
+  )
 }

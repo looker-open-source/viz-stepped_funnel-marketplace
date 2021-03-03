@@ -55,15 +55,11 @@ export const Tooltip = React.forwardRef(
     if (type === "default") {
       tooltipDef = (
         <Flex flexDirection="column">
-        {datum?.label && (
+        {datum && (
           <FlexItem mb="xsmall" data-testid="tooltip-category">
             <Text
               fontSize="xsmall"
-              dangerouslySetInnerHTML={{
-                __html: Sanitizer.sanitizeDOM(
-                  `${datum.label}: ${datum?.rendered} (${datum?.percent})`?? '')
-                }}
-            />
+            >{datum.tooltip_rendered}</Text>
           </FlexItem>
         )}
       </Flex>
