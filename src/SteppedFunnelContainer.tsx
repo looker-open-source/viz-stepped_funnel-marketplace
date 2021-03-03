@@ -1,21 +1,17 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { HelloWorld } from './VizzyUtils/HelloWorld'
-import { handleErrors } from './utils'
-import JsonViewer from './VizzyUtils/JsonViewer'
 import {FunnelChart} from './FunnelChart/FunnelChart'
-import {Tooltip, useTooltip} from "./Tooltip/Tooltip"
 import {ComponentsProvider} from "@looker/components"
-
+import {getRendered} from "./utils"
 import {
-  Cell,
   Chunk,
   LookerChartUtils,
   Looker,
-  VisualizationDefinition,
-  VisOption,
   VisOptions,
-  Link, SteppedFunnelChart, Vizzy, 
+  Link, 
+  SteppedFunnelChart, 
+  Vizzy, 
+  VisConfig,
 } from './types'
 
 // Global values provided via the API
@@ -60,7 +56,7 @@ const vis: SteppedFunnelChart = {
       ]
     ,
     4),
-    label_percent_position: Vizzy.makeSmallList("Labels", "Percent", "inline", 
+    percent_position: Vizzy.makeSmallList("Labels", "Percent", "inline", 
       [
         {"Left": "left"},
         {"Inline": "inline"},
@@ -69,7 +65,7 @@ const vis: SteppedFunnelChart = {
       ]
     ,
     5),
-    label_value_position: Vizzy.makeSmallList("Labels", "Value","right",
+    value_position: Vizzy.makeSmallList("Labels", "Value","right",
       [
         {"Left": "left"},
         {"Inline": "inline"},
@@ -111,8 +107,8 @@ const vis: SteppedFunnelChart = {
         label: fieldQr.label_short,
         name: fieldName,
         value: datum.value,
-        rendered: datum.rendered,
-        links: datum.links as Link[]
+        value_rendered: datum.rendered,
+        links: datum.links as Link[] || []
       }
     })
     config.autosort && chunkedData.sort((a: Chunk, b: Chunk) => {
@@ -129,18 +125,27 @@ const vis: SteppedFunnelChart = {
         ...c,
         percent_rendered: ((priorRowCalc && priorRowCalc[i] || c.value / maxValue)*100).toString().substring(0, 4) + "%",
         percent_number: (priorRowCalc && priorRowCalc[i] || (c.value / maxValue)),
-        percent_container: (priorRowCalc && (priorRowCalc[i] / Math.max(...priorRowCalc))) || (c.value / maxValue)
+        percent_container: (priorRowCalc && (priorRowCalc[i] / Math.max(...priorRowCalc))) || (c.value / maxValue),
+      }
+    })
+    chunkedData = chunkedData.map((c: Chunk, i: number) => {
+      return {
+        ...c,
+        left_rendered: getRendered(config, c, "left"),
+        inline_rendered: getRendered(config, c, "inline"),
+        right_rendered: getRendered(config, c, "right"),
+        tooltip_rendered: `${c.label}: ${c.value_rendered} (${c.percent_rendered})`
       }
     })
     // render chart
     this.chart = ReactDOM.render(
       <ComponentsProvider>
-      <FunnelChart 
-        data={chunkedData} 
-        config={config} 
-        element={element} 
-        openDrillMenu={LookerCharts.Utils.openDrillMenu}
-      />
+        <FunnelChart 
+          data={chunkedData} 
+          config={config} 
+          element={element} 
+          openDrillMenu={LookerCharts.Utils.openDrillMenu}
+        />
       </ComponentsProvider>,
       element
     )

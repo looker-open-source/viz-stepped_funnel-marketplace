@@ -5,7 +5,8 @@ import DOMPurify from 'dompurify'
 import {
   VisConfig,
   VisQueryResponse,
-  VisualizationDefinition
+  VisualizationDefinition,
+  Chunk
 } from './types'
 
 export const formatType = (valueFormat: string) => {
@@ -98,4 +99,11 @@ export const Sanitizer = {
     const anchorTag = template.content!.firstChild! as HTMLAnchorElement
     return anchorTag.getAttribute('href') || ''
   },
+}
+
+export function getRendered(config: VisConfig, c: Chunk, key: string) {
+  let label = config.label_position === key
+  let percent = config.percent_position === key
+  let value = config.value_position === key
+  return `${label ? c.label : ""}${value ? (label ? ": " : "") + c.value_rendered : ""}${percent ? (value || label ? " (" : "")+c.percent_rendered+(value || label ? ")" : "") : ""}`
 }

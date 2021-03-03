@@ -14,11 +14,15 @@ export interface Chunk {
   name?: string
   percent?: string
   value: number
-  rendered: string | Cell | undefined
+  value_rendered: string
   links: Link[]
   percent_number?: number
   percent_rendered?: string
   percent_container?: number
+  tooltip_rendered?: string
+  left_rendered?: string
+  inline_rendered?: string
+  right_rendered?: string
 }
 
 export interface LookerChartUtils {
