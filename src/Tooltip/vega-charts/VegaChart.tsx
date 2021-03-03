@@ -41,7 +41,6 @@ export function VegaChart({ datum, chartType, scale }: VegaChartProps) {
     }
   
     const dataWrapper = { turtles: data }
-    debugger;
     return( <VegaLite spec={spec} data={dataWrapper} /> )
   } 
   return (<DefaultToolTip datum={datum} />)
