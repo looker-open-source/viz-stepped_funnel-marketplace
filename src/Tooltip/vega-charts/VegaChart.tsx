@@ -7,7 +7,7 @@ import { DefaultToolTip } from '../DefaultTooltip';
 
 export interface VegaChartProps {
   datum?: Chunk
-  chart: AnyMark
+  chartType: AnyMark
   scale?: string
 }
 
@@ -20,11 +20,11 @@ function getTypeForScale(scale: string | undefined) {
   return SCALES[scale||'number']
 }
 
-export function VegaChart({ datum, chart, scale }: VegaChartProps) {
+export function VegaChart({ datum, chartType, scale }: VegaChartProps) {
   if (datum?.turtle && datum?.turtle.data.length) {
     const { dimension, measure, data } = datum.turtle
     const spec: VisualizationSpec = {
-      mark: chart,
+      mark: chartType,
       data: { name: 'turtles'},
       encoding: {
         x: { 

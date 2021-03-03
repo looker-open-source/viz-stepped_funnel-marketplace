@@ -15,11 +15,11 @@ export const computeTooltipPosition = (
     tooltipWidth: number,
     windowWidth: number
   ) => {
-    const TOOLTIP_OFFSET = 5
+    const TOOLTIP_OFFSET = 8
   
-    // If the tooltip goes beyond the right edge of the window, render it to the left of the mouse position.
+    // If mouse on left side of screen, draw tooltip right and vice versa
     const tooltipX =
-      rawX + TOOLTIP_OFFSET + tooltipWidth > windowWidth
+      rawX > (windowWidth/2)
         ? rawX - TOOLTIP_OFFSET - tooltipWidth
         : rawX + TOOLTIP_OFFSET
   

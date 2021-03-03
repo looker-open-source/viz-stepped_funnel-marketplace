@@ -1,6 +1,4 @@
-import React, { useRef, useLayoutEffect, useState } from "react"
 import { Chunk, Link, VisConfig } from "../types"
-import { } from "../utils"
 import styled from "styled-components"
 
 export const ChartWrapper = styled.div`
@@ -22,7 +20,6 @@ export const FunnelStep = styled.div`
   text-align: center;
   display: table; 
   overflow: hidden;
-
   :hover {
     filter: brightness(80%);
   }
@@ -34,36 +31,10 @@ export const FunnelStepContents = styled.span`
   // TODO: Labels > Color Label Toggle > Color Label
   color: ${(props: FunnelStepContentsProps) => props.color};
 `
-export const AxisContainer = styled.div`
-  text-align: center;
-  display: table; 
-  overflow: hidden;
-  float: left;
-  margin: 0;
-  width: 100%;
-  height: ${(props: AxisContainerProps) => props.height}px;
-`
-export const LeftAxis = styled.div`
-  height: 100%;
-  width: 10%;
-  float: left;
-`
-export const RightAxis = styled.div`
-  height: 100%;
-  width: 10%;
-  float: left;
-`
 export const Chart = styled.div`
   height: 100%;
-  width: 80%;
+  width: ${(props: ChartProps) => props.width * 100}%;
   float: left;
-`
-export const AxisLabel = styled.span`
-  display: table-cell; 
-  vertical-align: middle;
-  // TODO: Label Scale option
-  font-size: 0.9em;
-  color: rgb(149, 149, 149);
 `
 export const FunnelStepOuterContents = styled.span`
   overflow: hidden;
@@ -95,8 +66,8 @@ export interface FunnelStepWrapperProps {
   height: number
 }
 
-export interface AxisContainerProps {
-  height: number
+export interface ChartProps {
+  width: number
 }
 
 export interface FunnelStepContentsProps {

@@ -20,10 +20,16 @@ export interface Chunk {
   name?: string
   percent?: string
   value: number
-  rendered: string | Cell | undefined
+  value_rendered: string
   links: Link[]
   percent_number?: number
-  turtle: Turtle
+  percent_rendered?: string
+  percent_container?: number
+  tooltip_rendered?: string
+  left_rendered?: string
+  inline_rendered?: string
+  right_rendered?: string,
+  turtle?: Turtle
 }
 
 export interface LookerChartUtils {
@@ -107,6 +113,10 @@ export interface VisConfig {
   [key: string]: VisConfigValue
 }
 
+export interface SelectOption {
+  [key: string]: string
+}
+
 export type VisConfigValue = any
 
 export interface VisUpdateDetails {
@@ -153,79 +163,104 @@ export interface SteppedFunnelChart extends VisualizationDefinition {
 }
 
 export interface MarketplaceVizHelpers {
-  makeToggle: (section: string, label: string, init: boolean, order?: number, parent?: string, parentObj?: any) => VisOption,
-  makeString: (section: string, label: string, init: string, order?: number, parent?: string, parentObj?: any) => VisOption,
-  makeColor: (section: string, label: string, order?: number, parentKey?: string, parentObj?: any) => VisOption,
-  dependToggle: (section: string, label: string, init: boolean, parentKey?: string, parentObj?: any) => VisOption,
-  dependString: (section: string, label: string, init: string, parentKey?: string, parentObj?: any) => VisOption,
-  makeNumber: (section: string, label: string, init: number, order?: number, parent?: string, parentObj?: any) => VisOption
-  makeList: (section: string, label: string, init: string, choices: VisOptionSelection[], order?: number, parent?: string, parentObj?: any) => VisOption,
+  makeToggle: (section: string, label: string, init: boolean, order: number) => VisOption,
+  makeString: (section: string, label: string, init: string, order: number) => VisOption,
+  makeColor: (section: string, label: string, order: number) => VisOption,
+  dependToggle: (section: string, label: string, init: boolean, parentKey: string, parentObj: any) => VisOption,
+  dependSingleColor: (section: string, label: string, parentKey: string, parentObj: any) => VisOption,
+  dependString: (section: string, label: string, init: string, parentKey: string, parentObj: any) => VisOption,
+  makeNumber: (section: string, label: string, init: number, order: number) => VisOption
+  makeList: (section: string, label: string, init: string, choices: SelectOption[], order: number) => VisOption,
+  makeSmallList: (section: string, label: string, init: string, choices: SelectOption[], order: number) => VisOption,
 }
 
 export const Vizzy: MarketplaceVizHelpers = {
-  makeToggle(section: string, label: string, init: boolean, order?: number, parentKey?: string, parentObj?: any): VisOption {
+  makeToggle(section: string, label: string, init: boolean, order: number): VisOption {
     return {
       type: "boolean",
       label: label,
       default: init,
       section: section,
-      order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
+      order: order * 10
     }
   },
-  dependToggle(section: string, label: string, init: boolean, parentKey?: string, parentObj?: any): VisOption {
+  dependToggle(section: string, label: string, init: boolean, parentKey: string, parentObj: any): VisOption {
     return {
       type: "boolean",
       label: label,
       default: init,
       section: section,
-      order: parentKey && parentObj.options[parentKey].order + 1
+      order: parentObj.options[parentKey].order + 1
     }
   },
-  makeString(section: string, label: string, init: string, order?: number, parentKey?: string, parentObj?: any): VisOption {
+  makeString(section: string, label: string, init: string, order: number): VisOption {
     return {
       type: "string",
       label: label,
       default: init,
       section: section,
-      order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
+      order: order * 10
     }
   },
-  makeNumber(section: string, label: string, init: number, order?: number, parentKey?: string, parentObj?: any): VisOption {
+  makeNumber(section: string, label: string, init: number, order: number): VisOption {
     return {
       type: "number",
       label: label,
       default: init,
       section: section,
-      order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
+      order: order * 10
     }
   },
-  dependString(section: string, label: string, init: string, parentKey?: string, parentObj?: any): VisOption {
+  dependString(section: string, label: string, init: string, parentKey: string, parentObj: any): VisOption {
     return {
       type: "string",
       label: label,
       default: init,
       section: section,
-      order: parentKey && parentObj.options[parentKey].order + 1
+      order: parentObj.options[parentKey].order + 1
     }
   },
-  makeColor(section: string, label: string, order?: number, parentKey?: string, parentObj?: any): VisOption {
+  makeColor(section: string, label: string, order: number): VisOption {
     return {
       type: "array",
       label: label,
       section: section,
       display: "colors",
-      order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10
+      order: order * 10
     }
   },
-  makeList(section: string, label: string, init: string, choices: VisOptionSelection[], order?: number, parentKey?: string, parentObj?: any): VisOption {
+  dependSingleColor(section: string, label: string, parentKey: string, parentObj: any): VisOption {
+    return {
+      type: "array",
+      label: label,
+      section: section,
+      display: "color",
+      order: parentObj.options[parentKey].order + 1,
+      display_size: "half",
+      default: ["#282828"],
+    }
+  },
+  makeList(section: string, label: string, init: string, choices: SelectOption[], order: number,): VisOption {
     return {
       type: "string",
       label: label,
       default: init,
       display: "select",
       section: section,
-      order: parentKey ? parentObj.options[parentKey].order + 1 : order && order * 10,
+      order: order * 10,
       values: choices
+    }
+  },
+  makeSmallList(section: string, label: string, init: string, choices: SelectOption[], order: number,): VisOption {
+    return {
+      type: "string",
+      label: label,
+      default: init,
+      display: "select",
+      section: section,
+      order: order * 10,
+      values: choices,
+      display_size: "third"
     }
   }
 }

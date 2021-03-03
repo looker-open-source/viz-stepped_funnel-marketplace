@@ -32,7 +32,7 @@ import { DefaultToolTip } from './DefaultTooltip'
 import { VegaChart } from './vega-charts/VegaChart'
 
 export const Tooltip = React.forwardRef(
-  ({ datum, visible, x, y, type, scale }: TooltipState, ref: React.Ref<HTMLDivElement>) => {
+  ({ datum, visible, x, y, chartType, scale }: TooltipState, ref: React.Ref<HTMLDivElement>) => {
   // We can't use styled components here for performance reasons.
   // x & y change way too frequently.
     const styles: React.CSSProperties = {
@@ -50,13 +50,13 @@ export const Tooltip = React.forwardRef(
     }
 
     let tooltipDef;
-    if (type === "default") {
+    if (chartType === "default") {
       tooltipDef = <DefaultToolTip datum={datum} />
     } else {
       tooltipDef = 
         <VegaChart 
           datum={datum} 
-          chart={type as any} 
+          chartType={chartType as any} 
           scale={scale}
         />
     }
@@ -87,6 +87,7 @@ export function useTooltip() {
     const position = computeTooltipPosition(x, y, tooltipWidth, windowWidth)
 
     setHovered({
+      chartType: hovered.chartType,
       datum: datum,
       visible: true,
       x: position.x,

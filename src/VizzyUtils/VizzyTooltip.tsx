@@ -24,27 +24,35 @@
 
  */
 
-import React, { useRef, useLayoutEffect } from "react"
+import React, { useRef, useLayoutEffect, useState } from "react"
+import styled from "styled-components"
 
-export const ChartText: React.FC<{text: string | undefined, fontSize: number, setWidth: (w: number) => void, setHeight: (h: number) => void}> = ({ 
-  text,
-  fontSize,
-  setWidth,
-  setHeight,
- }) => {
-  const ref = useRef(null);
-  useLayoutEffect(() => {
-    // @ts-ignore
-    setWidth(ref.current.offsetWidth)
-    // @ts-ignore
-    setHeight(ref.current.offsetHeight)
-  }, [ref.current, fontSize]);
-  return <text ref={ref}>{text}</text>;
+export interface TooltipProps {
+  x: number
+  y: number
+  content: string
 }
 
-export const getChartText = (stepLabel: string | undefined, fontSize: number) => {
-  const [ computedWidth, setComputedWidth ] = React.useState(0);
-  const [ computedHeight, setComputedHeight ] = React.useState(0);
-  let chartText = (<ChartText text={stepLabel} fontSize={fontSize} setWidth={setComputedWidth} setHeight={setComputedHeight}/>)
-  return {element: chartText, width: computedWidth, height: computedHeight };
+export interface VizzyTooltipProps {
+  metadata: TooltipProps
+}
+
+const VizzyTooltipWrapper = styled.div`
+  position: absolute;
+  font-size: 0.9em;
+  color: white;
+  opacity: 0.95;
+  background-color: #282828;
+  border-radius: 5px;
+  padding: 15px;
+`
+
+export const VizzyTooltip: React.FC<VizzyTooltipProps> = ({ 
+  metadata
+ }) => {
+  return (
+    <VizzyTooltipWrapper style={{left: metadata.x,top: metadata.y}}>
+      {metadata.content}
+    </VizzyTooltipWrapper>
+  )
 }
