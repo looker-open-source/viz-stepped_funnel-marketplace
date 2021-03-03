@@ -29,7 +29,6 @@ import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterConten
 import { Chunk } from "../types"
 import { getChartText } from "./utils"
 import { Tooltip, useTooltip } from "../Tooltip/Tooltip"
-import { VegaChart } from "../Tooltip/vega-charts/VegaChart"
 import {LeftAxis, RightAxis} from "./Axes"
 
 export const FunnelChart: React.FC<FunnelChartProps> = ({ 
@@ -47,8 +46,10 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
   } = useTooltip();
 
   let stepHeight = 1 / data.length * element.getBoundingClientRect().height
-  let funnelColors = config.bar_colors && config.bar_reverse_colors ? config.bar_colors.reverse() : config.bar_colors
-  funnelColors = config.bar_colors ? config.bar_colors : []
+
+  // let funnelColors = config.bar_colors && config.bar_reverse_colors ? config.bar_colors.reverse() : config.bar_colors
+  // funnelColors = config.bar_colors ? config.bar_colors : []
+  let funnelColors = config.bar_colors
 
   let leftW = data[0].left_rendered !== "" ? .1 : 0
   let rightW = data[0].right_rendered !== "" ? .1 : 0
@@ -88,7 +89,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         )
       })}</Chart>
       <RightAxis config={config} data={data} element={element} stepHeight={stepHeight} width={rightW}/>
-      <Tooltip {...initalState} ref={tooltipContainer} chartType={'line'} scale={'time'}/>
+      <Tooltip {...initalState} ref={tooltipContainer}/>
     </ChartWrapper>
   )
 }

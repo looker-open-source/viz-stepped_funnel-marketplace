@@ -38,9 +38,6 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-json-inspector": "^7.1.1",
-    "react-vega": "^7.4.2",
-    "vega": "^5.19.1",
-    "vega-lite": "^5.0.0",
     "webpack": "^4.43.0"
   }
 }
