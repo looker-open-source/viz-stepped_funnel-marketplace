@@ -30,6 +30,7 @@ export interface Chunk {
   inline_rendered?: string
   right_rendered?: string,
   turtle?: Turtle
+  series_color?: string
 }
 
 export interface LookerChartUtils {

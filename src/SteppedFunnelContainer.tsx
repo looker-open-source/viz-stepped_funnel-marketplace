@@ -102,11 +102,12 @@ const vis: SteppedFunnelChart = {
     let turtleQuery = Object.keys(inputRow).find(e => e.startsWith(TURTLES))
     let inputFields =  config.input_fields || queryResponse.fields.measure_like.map((f: any) => f.name)
     inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
-    let chunkedData: Chunk[] = inputFields.filter((e: string) => !e.startsWith(TURTLES)).map((fieldName: string) => {
+    let chunkedData: Chunk[] = inputFields.filter((e: string) => !e.startsWith(TURTLES)).map((fieldName: string, i: number) => {
       let datum = inputRow[fieldName]
       let fieldQr = queryResponse.fields.measure_like.filter((f: any) => f.name === fieldName)[0]
       return {
         label: fieldQr.label_short,
+        sort_index: i,
         name: fieldName,
         value: datum.value,
         value_rendered: datum.rendered,
@@ -126,6 +127,7 @@ const vis: SteppedFunnelChart = {
     chunkedData = chunkedData.map((c: Chunk, i: number) => {
       return {
         ...c,
+        sort_index: i,
         percent_rendered: ((priorRowCalc && priorRowCalc[i] || c.value / maxValue)*100).toString().substring(0, 4) + "%",
         percent_number: (priorRowCalc && priorRowCalc[i] || (c.value / maxValue)),
         percent_container: (priorRowCalc && (priorRowCalc[i] / Math.max(...priorRowCalc))) || (c.value / maxValue),

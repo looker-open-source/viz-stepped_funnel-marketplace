@@ -26,23 +26,24 @@ export function VegaChart({ datum, chartType, scale }: VegaChartProps) {
     const spec: VisualizationSpec = {
       mark: chartType,
       data: { name: 'turtles'},
+      background: null,
+      config: {line:{color:datum.series_color}},
       encoding: {
         x: { 
           field: dimension.name.replace('.', '_'), 
           type: getTypeForScale(scale),
-          axis: { title: dimension.label, grid: false}
+          axis: { title: dimension.label, grid: false, labelColor: "#FFF",tickColor: "#FFF",titleColor: "#FFF"}
         },
         y: { 
           field: measure.name, 
           type: QUANTITATIVE,
-          axis: { title: measure.label, grid: false }
+          axis: { title: measure.label, grid: false, labelColor:"#FFF",tickColor: "#FFF",titleColor: "#FFF"}
         }
       },
     }
   
     const dataWrapper = { turtles: data }
-    debugger;
-    return( <VegaLite spec={spec} data={dataWrapper} /> )
+    return( <VegaLite actions={false} spec={spec} data={dataWrapper} /> )
   } 
   return (<DefaultToolTip datum={datum} />)
 

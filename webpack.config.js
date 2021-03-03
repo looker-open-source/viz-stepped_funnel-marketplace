@@ -5,7 +5,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var webpackConfig = {
     mode: 'production',
     entry: {
-        hello_world: './src/SteppedFunnelContainer.tsx',
+        stepped_funnel: './src/SteppedFunnelContainer.tsx',
     },
     output: {
         filename: 'bundle.js',

@@ -70,7 +70,7 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
             color={funnelColors[i]}
             width={stepWidthPct - 0.02}
             height={stepHeight}
-            onMouseMove={(e)=>{tooltipMove(e, d)}}
+            onMouseMove={(e)=>{d.series_color = funnelColors[i];tooltipMove(e, d)}}
             onMouseLeave={tooltipOut}
             onClick={(e: any)=>{
               // @ts-ignore
