@@ -28,7 +28,7 @@ export const computeTooltipPosition = (
         : rawX + TOOLTIP_OFFSET
     // debugger;
     // Much less likely to run off the bottom of the page, so ignore for now.
-    const tooltipY = rawY > (windowHeight - tooltipHeight)
+    const tooltipY = rawY > (windowHeight/2)
       ? rawY - TOOLTIP_OFFSET - tooltipHeight
       : rawY + TOOLTIP_OFFSET
   

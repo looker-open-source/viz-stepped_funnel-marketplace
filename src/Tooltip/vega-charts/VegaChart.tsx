@@ -25,6 +25,7 @@ export function VegaChart({ datum, chartType, scale }: VegaChartProps) {
     const { dimension, measure, data } = datum.turtle
     const spec: VisualizationSpec = {
       mark: chartType,
+      height: 80,
       data: { name: 'turtles'},
       background: null,
       config: {line:{color:datum.series_color}},

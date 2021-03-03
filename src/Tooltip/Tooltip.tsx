@@ -48,22 +48,14 @@ export const Tooltip = React.forwardRef(
       top: `${y}px`,
       left: `${x}px`,
     }
-
-    let tooltipDef;
-    if (chartType === "default") {
-      tooltipDef = <DefaultToolTip datum={datum} />
-    } else {
-      tooltipDef = 
-        <VegaChart 
-          datum={datum} 
-          chartType={chartType as any} 
-          scale={scale}
-        />
+    if (datum) {
+      datum.scale = scale
+      datum.chartType = chartType
     }
 
     return  (
       <div ref={ref} style={styles}>
-        {tooltipDef}
+        <DefaultToolTip datum={datum} />
       </div>
     )
   }

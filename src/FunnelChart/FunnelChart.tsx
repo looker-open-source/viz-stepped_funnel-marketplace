@@ -64,13 +64,14 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         // outerStepTextY = begin of step Y + half of step Y - quarter of text height
         let outerStepTextY = ((stepHeight + 3) * i + (stepHeight / 2))
         let textWithin = textWidth < (stepWidth*0.75) ? true : false
+        d.series_color = funnelColors[i];
         return (
         <FunnelStepWrapper height={stepHeight}>
           <FunnelStep 
             color={funnelColors[i]}
             width={stepWidthPct - 0.02}
             height={stepHeight}
-            onMouseMove={(e)=>{d.series_color = funnelColors[i];tooltipMove(e, d)}}
+            onMouseMove={(e)=>{tooltipMove(e, d)}}
             onMouseLeave={tooltipOut}
             onClick={(e: any)=>{
               // @ts-ignore

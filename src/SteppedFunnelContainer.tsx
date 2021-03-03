@@ -12,6 +12,8 @@ import {
   SteppedFunnelChart, 
   Vizzy, 
   VisConfig,
+  VisData,
+  Row
 } from './types'
 import { prepareTurtlesQuery, TURTLES } from "./turtles";
 
@@ -99,22 +101,42 @@ const vis: SteppedFunnelChart = {
     }
 
     let inputRow = data[0]
+
     let turtleQuery = Object.keys(inputRow).find(e => e.startsWith(TURTLES))
-    let inputFields =  config.input_fields || queryResponse.fields.measure_like.map((f: any) => f.name)
-    inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
-    let chunkedData: Chunk[] = inputFields.filter((e: string) => !e.startsWith(TURTLES)).map((fieldName: string, i: number) => {
-      let datum = inputRow[fieldName]
-      let fieldQr = queryResponse.fields.measure_like.filter((f: any) => f.name === fieldName)[0]
-      return {
-        label: fieldQr.label_short,
-        sort_index: i,
-        name: fieldName,
-        value: datum.value,
-        value_rendered: datum.rendered,
-        links: datum.links as Link[] || [],
-        ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, fieldName, turtleQuery, queryResponse)})
-      }
-    })
+    let chunkedData: Chunk[]
+    if ((data.length === 1 && config.bar_orientation === "automatic") || config.bar_orientation === "data_in_columns") {
+      let inputFields =  config.input_fields || queryResponse.fields.measure_like.map((f: any) => f.name)
+      inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
+      chunkedData = inputFields.filter((e: string) => !e.startsWith(TURTLES)).map((fieldName: string, i: number) => {
+        let datum = inputRow[fieldName]
+        let fieldQr = queryResponse.fields.measure_like.filter((f: any) => f.name === fieldName)[0]
+        return {
+          label: fieldQr.label_short,
+          sort_index: i,
+          name: fieldName,
+          value: datum.value,
+          value_rendered: datum.rendered,
+          links: datum.links as Link[] || [],
+          ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, fieldName, turtleQuery, queryResponse)})
+        }
+      })
+    } else {
+      let dimQr = queryResponse.fields.dimension_like[0]
+      let meaQr = queryResponse.fields.measure_like[0]
+      let inputFields =  config.input_fields || [dimQr.name, meaQr.name] 
+      inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
+      chunkedData = data.map((inputRow: Row, i: number) => {
+        return {
+          label: inputRow[dimQr.name].value,
+          sort_index: i,
+          name: inputRow[meaQr.name].name,
+          value:  inputRow[meaQr.name].value,
+          value_rendered:  inputRow[meaQr.name].rendered || inputRow[meaQr.name].value,
+          links:  inputRow[meaQr.name].links,
+          ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, meaQr.name, turtleQuery, queryResponse)})
+        }
+      })
+    }
     config.autosort && chunkedData.sort((a: Chunk, b: Chunk) => {
       return a.value > b.value ? -1 : 1
     })
