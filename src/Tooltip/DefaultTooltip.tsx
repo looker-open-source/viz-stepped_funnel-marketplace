@@ -8,13 +8,7 @@ export function DefaultToolTip({datum}: any) {
     <Flex flexDirection="column">
     {datum?.label && (
       <FlexItem mb="xsmall" data-testid="tooltip-category">
-        <Text
-          fontSize="xsmall"
-          dangerouslySetInnerHTML={{
-            __html: Sanitizer.sanitizeDOM(
-            `${datum.label}: ${datum?.rendered || datum?.value} (${datum?.percent})`?? '')
-          }}
-        />
+        <Text fontSize="xsmall">{datum.tooltip_rendered}</Text>
       </FlexItem>
     )}
     </Flex>
