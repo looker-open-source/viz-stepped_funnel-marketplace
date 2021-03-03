@@ -15,7 +15,6 @@ import {
   VisData,
   Row
 } from './types'
-import { prepareTurtlesQuery, TURTLES } from "./turtles";
 
 // Global values provided via the API
 declare var looker: Looker
@@ -100,14 +99,15 @@ const vis: SteppedFunnelChart = {
       this.trigger && this.trigger('registerOptions', this.options)
     }
 
+    config.bar_colors && config.bar_reverse_colors ? config.bar_colors.reverse() : config.bar_colors
+
     let inputRow = data[0]
 
-    let turtleQuery = Object.keys(inputRow).find(e => e.startsWith(TURTLES))
     let chunkedData: Chunk[]
     if ((data.length === 1 && config.bar_orientation === "automatic") || config.bar_orientation === "data_in_columns") {
       let inputFields =  config.input_fields || queryResponse.fields.measure_like.map((f: any) => f.name)
       inputFields !== config.input_fields && this.trigger && this.trigger("updateConfig",  [{input_fields: config.input_fields}])
-      chunkedData = inputFields.filter((e: string) => !e.startsWith(TURTLES)).map((fieldName: string, i: number) => {
+      chunkedData = inputFields.map((fieldName: string, i: number) => {
         let datum = inputRow[fieldName]
         let fieldQr = queryResponse.fields.measure_like.filter((f: any) => f.name === fieldName)[0]
         return {
@@ -117,7 +117,6 @@ const vis: SteppedFunnelChart = {
           value: datum.value,
           value_rendered: datum.rendered,
           links: datum.links as Link[] || [],
-          ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, fieldName, turtleQuery, queryResponse)})
         }
       })
     } else {
@@ -133,7 +132,6 @@ const vis: SteppedFunnelChart = {
           value:  inputRow[meaQr.name].value,
           value_rendered:  inputRow[meaQr.name].rendered || inputRow[meaQr.name].value,
           links:  inputRow[meaQr.name].links,
-          ...(turtleQuery && {turtle: prepareTurtlesQuery(inputRow, meaQr.name, turtleQuery, queryResponse)})
         }
       })
     }

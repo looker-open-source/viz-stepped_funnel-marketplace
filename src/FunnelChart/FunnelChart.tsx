@@ -29,7 +29,6 @@ import { FunnelChartProps, FunnelStep, FunnelStepContents, FunnelStepOuterConten
 import { Chunk } from "../types"
 import { getChartText } from "./utils"
 import { Tooltip, useTooltip } from "../Tooltip/Tooltip"
-import { VegaChart } from "../Tooltip/vega-charts/VegaChart"
 import {LeftAxis, RightAxis} from "./Axes"
 
 export const FunnelChart: React.FC<FunnelChartProps> = ({ 
@@ -47,8 +46,6 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
   } = useTooltip();
 
   let stepHeight = 1 / data.length * element.getBoundingClientRect().height
-  let funnelColors = config.bar_colors && config.bar_reverse_colors ? config.bar_colors.reverse() : config.bar_colors
-  funnelColors = config.bar_colors ? config.bar_colors : []
 
   let leftW = data[0].left_rendered !== "" ? .1 : 0
   let rightW = data[0].right_rendered !== "" ? .1 : 0
@@ -64,11 +61,11 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         // outerStepTextY = begin of step Y + half of step Y - quarter of text height
         let outerStepTextY = ((stepHeight + 3) * i + (stepHeight / 2))
         let textWithin = textWidth < (stepWidth*0.75) ? true : false
-        d.series_color = funnelColors[i];
+        d.series_color = config.bar_colors[i];
         return (
         <FunnelStepWrapper height={stepHeight}>
           <FunnelStep 
-            color={funnelColors[i]}
+            color={config.bar_colors[i]}
             width={stepWidthPct - 0.02}
             height={stepHeight}
             onMouseMove={(e)=>{tooltipMove(e, d)}}
@@ -83,12 +80,12 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
           >
             {textWithin && <FunnelStepContents font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
           </FunnelStep>
-          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={funnelColors[i]} padding={stepWidthPct/2 + (!rightW ? .1 : 0)} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
+          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors[i]} padding={stepWidthPct/2 + (!rightW ? .1 : 0)} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
         </FunnelStepWrapper>
         )
       })}</Chart>
       <RightAxis config={config} data={data} element={element} stepHeight={stepHeight} width={rightW}/>
-      <Tooltip {...initalState} ref={tooltipContainer} chartType={'line'} scale={'time'}/>
+      <Tooltip {...initalState} ref={tooltipContainer}/>
     </ChartWrapper>
   )
 }
