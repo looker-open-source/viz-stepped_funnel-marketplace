@@ -1,5 +1,6 @@
 import styled from "styled-components"
-import {Chunk, VisConfig} from "../../types"
+import {Chunk} from "../../types"
+import {VisConfig} from "../../../../vizzy/src/VizzyUtils"
 
 export interface LeftAxisContainerProps {
   width: number

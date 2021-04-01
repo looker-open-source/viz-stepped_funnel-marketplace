@@ -3,11 +3,13 @@ import DOMPurify from 'dompurify'
 
 
 import {
-  VisConfig,
-  VisQueryResponse,
-  VisualizationDefinition,
   Chunk
 } from './types'
+import {
+  VisConfig,
+  VisQueryResponse,
+  VisualizationDefinition
+} from "../../vizzy/src/VizzyUtils"
 
 export const formatType = (valueFormat: string) => {
   if (!valueFormat) return undefined

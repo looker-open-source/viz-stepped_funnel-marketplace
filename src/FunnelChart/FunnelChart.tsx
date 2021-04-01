@@ -63,13 +63,17 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
         let textWithin = textWidth < (stepWidth*0.75) ? true : false
         d.series_color = config.bar_colors[i];
         return (
-        <FunnelStepWrapper height={stepHeight}>
+        <FunnelStepWrapper key={d.name} height={stepHeight}>
           <FunnelStep 
             color={config.bar_colors[i]}
             width={stepWidthPct - 0.02}
             height={stepHeight}
             onMouseMove={(e)=>{tooltipMove(e, d)}}
             onMouseLeave={tooltipOut}
+            key={d.name}
+            style={{
+              minWidth: "7px"
+            }}
             onClick={(e: any)=>{
               // @ts-ignore
               openDrillMenu({
@@ -78,9 +82,9 @@ export const FunnelChart: React.FC<FunnelChartProps> = ({
               });
             }}
           >
-            {textWithin && <FunnelStepContents font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
+            {textWithin && <FunnelStepContents key={d.name} font_size={config.font_size} color={"#FFF"}>{stepText.element}</FunnelStepContents>}
           </FunnelStep>
-          {!textWithin && <FunnelStepOuterContents font_size={config.font_size} color={config.bar_colors[i]} padding={stepWidthPct/2 + (!rightW ? .1 : 0)} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
+          {!textWithin && <FunnelStepOuterContents key={d.name} font_size={config.font_size} color={config.bar_colors[i]} padding={stepWidthPct/2 + (!rightW ? .1 : 0)} bottom={outerStepTextY}>{stepText.element}</FunnelStepOuterContents>}
         </FunnelStepWrapper>
         )
       })}</Chart>

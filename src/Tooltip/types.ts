@@ -1,4 +1,5 @@
-import { Chunk, VisConfig } from "../types"
+import { Chunk } from "../types"
+
 
 export interface TooltipState {
   datum?: Chunk
