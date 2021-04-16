@@ -1,4 +1,5 @@
-import { Chunk, Link, VisConfig } from "../types"
+import { Chunk } from "../types"
+import {Link, VisConfig} from '../../../vizzy/src/VizzyUtils'
 import styled from "styled-components"
 
 export const ChartWrapper = styled.div`
@@ -54,6 +55,7 @@ export interface FunnelChartProps {
   config: VisConfig
   element: HTMLElement
   openDrillMenu?: (options: { links: Link[], event: object }) => void
+  addError?: any
 }
 
 export interface FunnelStepProps {

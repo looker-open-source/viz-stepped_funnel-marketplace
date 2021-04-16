@@ -41,7 +41,7 @@ export const LeftAxis: React.FC<LeftAxisProps> = ({
       {config.label_left_axis && config.left_axis_label !== "" && getAxisLabel(config.left_axis_label, "left", element.getBoundingClientRect().height).element}
       {data.map((d: Chunk, i: number) => {
         return (
-          <AxisContainer height={stepHeight + (i * 2)}><AxisSubLabel>{d.left_rendered}</AxisSubLabel></AxisContainer>
+          <AxisContainer  key={d.name} height={stepHeight + (i * 2)}><AxisSubLabel>{d.left_rendered}</AxisSubLabel></AxisContainer>
         )
       })}
     </LeftAxisContainer>

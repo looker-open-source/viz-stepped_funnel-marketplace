@@ -5,16 +5,16 @@ import {ComponentsProvider} from "@looker/components"
 import {getRendered} from "./utils"
 import {
   Chunk,
-  LookerChartUtils,
   Looker,
-  VisOptions,
-  Link, 
   SteppedFunnelChart, 
-  Vizzy, 
-  VisConfig,
-  VisData,
-  Row
 } from './types'
+import {
+  Vizzy,
+  VisOptions,
+  Link,
+  Row,
+  LookerChartUtils
+} from '../../vizzy/src/VizzyUtils'
 
 // Global values provided via the API
 declare var looker: Looker
